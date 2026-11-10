@@ -1,0 +1,4 @@
+interface:
+  display_name: "Academic Morning Brief"
+  short_description: "Build a full-text-verified, deduplicated daily research brief"
+  default_prompt: "Prepare today’s full-text-verified academic morning brief for this project."

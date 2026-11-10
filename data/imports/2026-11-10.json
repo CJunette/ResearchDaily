@@ -1,0 +1,112 @@
+[
+  {
+    "title": "Five wearable sensors for objective measurement of near work and light exposure",
+    "authors": ["Raman Prasad Sah", "Nebee Yohannes", "Pavan Narra", "Lisa A. Ostrin"],
+    "publication_year": 2026,
+    "publication_date": "2026-11-05",
+    "venue": "npj Biological Timing and Sleep",
+    "work_type": "journal-article",
+    "doi": "10.1038/s44323-026-00113-0",
+    "source_url": "https://doi.org/10.1038/s44323-026-00113-0",
+    "pdf_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13739900/",
+    "source_name": "PubMed/OpenAlex",
+    "track": "hci_ubicomp_sensing",
+    "citations": 0,
+    "citation_source": "OpenAlex",
+    "citation_checked_at": "2026-11-10"
+  },
+  {
+    "title": "Silicon-photonics optoacoustic sensor for fully wearable blood pressure monitoring",
+    "authors": ["Gil Gelbert", "Ron Moisseev", "Yoav Hazan", "Tamar Harary", "Daniel H. Lange", "Amir Rosenthal"],
+    "publication_year": 2026,
+    "publication_date": "2026-09-17",
+    "venue": "Nature Communications",
+    "work_type": "journal-article",
+    "doi": "10.1038/s41467-026-77580-3",
+    "source_url": "https://doi.org/10.1038/s41467-026-77580-3",
+    "pdf_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13680363/",
+    "source_name": "PubMed/OpenAlex",
+    "track": "hci_ubicomp_sensing",
+    "citations": 0,
+    "citation_source": "OpenAlex",
+    "citation_checked_at": "2026-11-10"
+  },
+  {
+    "title": "Transforming wearable data into personal health insights using large language model agents",
+    "authors": [
+      "Mike A. Merrill", "Akshay Paruchuri", "Naghmeh Rezaei", "Geza Kovacs", "Javier Perez",
+      "Yun Liu", "Erik Schenck", "Nova Hammerquist", "Jake Sunshine", "Shyam A. Tailor",
+      "Kumar Ayush", "Hao-Wei Su", "Qian He", "Cory Y. McLean", "Mark Malhotra",
+      "Shwetak Patel", "Jiening Zhan", "Tim Althoff", "Daniel McDuff", "Xin Liu"
+    ],
+    "publication_year": 2026,
+    "publication_date": "2026-01-12",
+    "venue": "Nature Communications",
+    "work_type": "journal-article",
+    "doi": "10.1038/s41467-025-67922-y",
+    "source_url": "https://doi.org/10.1038/s41467-025-67922-y",
+    "pdf_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12855967/",
+    "source_name": "PubMed/OpenAlex",
+    "track": "hci_ubicomp_sensing",
+    "citations": 78,
+    "citation_source": "OpenAlex",
+    "citation_checked_at": "2026-11-10"
+  },
+  {
+    "title": "QAMQOR: a benchmark dataset for engagement recognition in robot-assisted autism therapy",
+    "authors": ["Nazerke Rakhymbayeva", "Aida Tungatarova", "Zhansaule Telisheva", "Anara Sandygulova"],
+    "publication_year": 2026,
+    "publication_date": "2026-10-13",
+    "venue": "Frontiers in Robotics and AI",
+    "work_type": "journal-article",
+    "doi": "10.3389/frobt.2026.1868211",
+    "source_url": "https://doi.org/10.3389/frobt.2026.1868211",
+    "pdf_url": "https://www.frontiersin.org/journals/robotics-and-ai/articles/10.3389/frobt.2026.1868211/full",
+    "source_name": "Frontiers/OpenAlex",
+    "track": "robotics_hri",
+    "citations": 0,
+    "citation_source": "OpenAlex",
+    "citation_checked_at": "2026-11-10"
+  },
+  {
+    "title": "Opportunistically Detecting Signs of Hypertension on a Consumer Smartwatch",
+    "authors": [
+      "Paolo Di Achille", "Lawrence Cai", "Jiang Wu", "Mingwu Gao", "Bhavna Daryani",
+      "Jonathan Wang", "Utkarsh Khanna", "Ho Ko", "Anupam Pathak", "Mark Malhotra",
+      "Shwetak Patel", "Jacqueline B. Shreibati", "Stephen P. Juraschek", "Pramod Rudrapatna",
+      "Matthew Thompson", "Ming-Zher Poh"
+    ],
+    "publication_year": 2026,
+    "publication_date": "2026-11-05",
+    "venue": "Nature",
+    "work_type": "journal-article",
+    "doi": "10.1038/s41586-026-11336-3",
+    "source_url": "https://doi.org/10.1038/s41586-026-11336-3",
+    "pdf_url": "https://www.medrxiv.org/content/10.64898/2025.12.10.25341972v1.full",
+    "source_name": "Nature/PubMed/OpenAlex",
+    "track": "broad_impact",
+    "citations": 1,
+    "citation_source": "OpenAlex",
+    "citation_checked_at": "2026-11-10"
+  },
+  {
+    "title": "A multiplexed wearable microfluidic platform for non-invasive sweat-inspired monitoring of plant guttation biomarkers",
+    "authors": [
+      "Bing Xue", "Ziyang Huang", "Zhiyuan Li", "Xue Sun", "Zhefu Shen", "Junyi Luo",
+      "Kejing Ren", "Wei Zhang", "Ruochen Yang", "Xiao Xiao", "Xiaoqian Su", "Shuoyan Liu",
+      "Anxu Ge", "Jinghua Li", "Ishara Dharmasena", "Tedrick Thomas Salim Lew", "Changsheng Wu"
+    ],
+    "publication_year": 2026,
+    "publication_date": "2026-10-01",
+    "venue": "Nature Communications",
+    "work_type": "journal-article",
+    "doi": "10.1038/s41467-026-77955-6",
+    "source_url": "https://doi.org/10.1038/s41467-026-77955-6",
+    "pdf_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13720148/",
+    "source_name": "PubMed/OpenAlex",
+    "track": "serendipity",
+    "citations": 0,
+    "citation_source": "OpenAlex",
+    "citation_checked_at": "2026-11-10"
+  }
+]

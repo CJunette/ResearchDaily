@@ -1,0 +1,84 @@
+{
+  "brief": {
+    "timezone": "Europe/London",
+    "target_minutes": 30,
+    "max_minutes": 35,
+    "max_items": 6,
+    "lookback_days": 45,
+    "min_quality_score": 7.0
+  },
+  "quotas": {
+    "core_min": 2,
+    "core_max": 3,
+    "adjacent_min": 1,
+    "adjacent_max": 2,
+    "heavyweight_target": 1,
+    "serendipity_max": 1
+  },
+  "ranking": {
+    "relevance": 0.35,
+    "quality": 0.25,
+    "innovation": 0.20,
+    "impact": 0.10,
+    "venue": 0.10
+  },
+  "tracks": {
+    "hci_ubicomp_sensing": {
+      "weight": 1.0,
+      "role": "core",
+      "keywords": [
+        "human-computer interaction", "ubiquitous computing", "wearable sensing",
+        "mobile sensing", "ambient sensing", "contactless sensing", "multimodal sensing",
+        "activity recognition", "physiological sensing", "RF sensing", "radar sensing",
+        "acoustic sensing", "personal informatics", "on-device intelligence"
+      ]
+    },
+    "digital_health": {
+      "weight": 0.65,
+      "role": "adjacent",
+      "keywords": [
+        "digital health", "digital biomarkers", "remote patient monitoring",
+        "clinical artificial intelligence", "mental health sensing", "rehabilitation technology"
+      ]
+    },
+    "robotics_hri": {
+      "weight": 0.45,
+      "role": "adjacent",
+      "keywords": [
+        "human-robot interaction", "assistive robotics", "social robotics",
+        "embodied artificial intelligence", "robot learning"
+      ]
+    },
+    "ai_vision": {
+      "weight": 0.40,
+      "role": "adjacent",
+      "keywords": [
+        "multimodal learning", "computer vision", "foundation models",
+        "representation learning", "machine learning systems"
+      ]
+    },
+    "broad_impact": {
+      "weight": 0.30,
+      "role": "heavyweight",
+      "keywords": [
+        "scientific breakthrough", "perspective", "review", "human behaviour",
+        "artificial intelligence and society"
+      ]
+    },
+    "serendipity": {
+      "weight": 0.15,
+      "role": "serendipity",
+      "keywords": [
+        "novel scientific instrument", "unexpected interdisciplinary method", "new research paradigm"
+      ]
+    }
+  },
+  "preferences": {
+    "real_world_deployment": "high",
+    "novel_sensing_modalities": "high",
+    "technical_systems": "high",
+    "human_value": "high",
+    "pure_benchmark_improvement": "low"
+  }
+}
+

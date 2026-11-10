@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Research Daily · 2026-11-10</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;600;700;900&family=Noto+Serif+SC:wght@600;700;900&display=swap" rel="stylesheet"><link rel="stylesheet" href="../../styles.css"></head>
+<body><header class="masthead"><a class="brand" href="../"><span class="brand-mark">RD</span><span><strong>RESEARCH DAILY</strong><small>FULL-TEXT REVIEWED</small></span></a><div class="issue"><a class="archive-link" href="../">综合目录</a>&nbsp;&nbsp;·&nbsp;&nbsp;2026-11-10</div></header>
+<main><section class="hero archive-hero"><div class="hero-copy"><p class="eyebrow">PERMANENT DAILY EDITION</p><h1>2026-11-10<br><em>学术早报</em></h1><p class="dek">共 6 篇，建议阅读 31 分钟。此页面按日期永久保存，后续早报不会覆盖本期内容。</p><div class="hero-actions"><a class="primary" href="#core">开始阅读 <span>↓</span></a><a class="ghost archive-button" href="../">查看全部日期</a></div></div><aside class="reading-map"><div class="map-head"><span>ARCHIVED EDITION</span><strong>31<span>MIN</span></strong></div><p class="archive-count">6 篇全文核验论文<br>推荐记录已写入永久去重账本</p></aside></section>
+<section class="priority"><div class="priority-label"><span>IF YOU ONLY READ TWO</span><b>只读两篇</b></div><a href="#paper-p_1e363db76b43e7ce"><span>01</span><strong>让语言模型先拆问题、写代码算个人可穿戴数据、出错后再重试，比一次性给答案可靠得多；但这篇论文证明的是“答题能力”，不是这些建议真的能改善健康。</strong><i>6 min ↗</i></a><a href="#paper-p_e1401bb657deafba"><span>02</span><strong>这块手表不尝试报出你此刻的血压，而是连续看一周的脉搏光学信号和动作，判断你是否可能长期偏高；它比一次门诊测量多抓到一些人，但仍漏掉约三分之一病例。</strong><i>6 min ↗</i></a></section><section class="paper-section core" id="core"><header class="section-head"><div><span class="section-no">01</span><p>PRIMARY SIGNAL</p></div><h2>主要相关</h2><p>本期内容已阅读全文并永久归档。</p></header>
+        <article class="paper" id="paper-p_1e363db76b43e7ce">
+          <div class="paper-index">01</div>
+          <div class="paper-main">
+            <div class="meta"><span>Nature Communications · 2026</span><span>6 MIN</span><span>OpenAlex 引用 78 · 2026-11-10</span></div>
+            <h3>Transforming wearable data into personal health insights using large language model agents</h3>
+            <p class="authors">Mike A. Merrill、Akshay Paruchuri、Naghmeh Rezaei、Geza Kovacs、Javier Perez、Yun Liu、Erik Schenck、Nova Hammerquist、Jake Sunshine、Shyam A. Tailor、Kumar Ayush、Hao-Wei Su、Qian He、Cory Y. McLean、Mark Malhotra、Shwetak Patel、Jiening Zhan、Tim Althoff、Daniel McDuff、Xin Liu</p>
+            <div class="plain"><small>说人话</small><p>让语言模型先拆问题、写代码算个人可穿戴数据、出错后再重试，比一次性给答案可靠得多；但这篇论文证明的是“答题能力”，不是这些建议真的能改善健康。</p></div>
+            <details><summary>展开完整精读笔记 <span>+</span></summary>
+              <div class="review-sheet">
+                <div class="review-kicker"><span>FULL-TEXT NOTES</span><p>来自方法、结果、讨论与局限部分的全文核验，不是摘要改写。</p></div>
+                <div class="review-pair">
+                  <section class="review-block"><b>01</b><div><h4>研究问题</h4><p>像“运动后的睡眠是否更好”这类个人健康问题既需要准确计算时间序列，又需要结合背景知识。纯文本推理容易算错，单次代码生成也无法发现并修复自己的错误。</p></div></section>
+                  <section class="review-block"><b>02</b><div><h4>方法与样本</h4><p>PHIA 把规划、Python 数据分析和网页检索组合成多步 agent。作者构建了 4000 多个封闭式和开放式问题，用来源于 3 万名同意参与研究的 Fitbit/Pixel Watch 用户数据训练生成器并合成 56 个虚拟用户，抽取 4 个做客观评估；开放问题由多人盲评，累计约 650 小时人工评估。</p></div></section>
+                </div>
+                <section class="review-contributions"><div class="review-title"><b>03</b><h4>主要贡献</h4><span>作者实际交付了什么</span></div><ol><li><span>01</span><p>提出一个针对个人可穿戴时间序列的 agent 工作流，可反复生成代码、检查结果、检索背景知识并修正错误。</p></li><li><span>02</span><p>发布高保真合成可穿戴数据和 4000 多题的个人健康洞察评测集，降低真实个人数据的隐私风险。</p></li><li><span>03</span><p>在客观问题上达到 84% 准确率；代码错误率为 0.192，而单次代码生成基线为 0.395，并展示了非零的自我恢复能力。</p></li></ol></section>
+                <section class="review-delta"><div class="review-title"><b>04</b><h4>相较以往的 delta</h4><span>过去做法 → 本文改变 → 仍需付出的代价</span></div><p>以往工作多把汇总后的可穿戴指标直接塞进模型，或让模型一次生成代码；PHIA 把问题分解、代码执行、外部检索和迭代纠错串成闭环。真正的增量是可执行且能恢复的分析流程，而不是单纯换了更大的语言模型。</p></section>
+                <div class="review-pair judgement">
+                  <section class="review-block evidence"><b>05</b><div><h4>证据够不够</h4><p>同一底层模型下与数值推理、代码生成等基线比较，能较好隔离 agent 流程本身的作用；人工盲评规模也很大。可是客观评估主要依赖 4 个合成用户，开放问题由熟悉消费健康数据但不是临床医生的评审评价，且没有真实用户健康结局。</p></div></section>
+                  <section class="review-block limitations"><b>06</b><div><h4>局限与不可外推之处</h4><p>没有证明用户会更理解数据、改变行为或获得临床收益；医学建议的真实性没有由临床专家系统评估；问题来源部分来自作者同事，可能不代表普通用户；合成数据虽保护隐私，但可能弱化真实世界的长尾缺失、设备故障和复杂共病。</p></div></section>
+                </div>
+                <div class="review-bottom">
+                  <section><span>WHY READ</span><h4>为什么值得你读</h4><p>它正好连接 sensing、personal informatics 和 AI agent：展示了如何把连续传感数据从“模型输入”变成可追问、可计算、可审计的交互式分析对象。</p></section>
+                  <section><span>READING PATH</span><h4>如果打开原文，优先看这里</h4><p>先看 Fig. 7 的 agent 流程，再看 Fig. 1–4 的错误率与恢复率；最后精读 Discussion 的四项限制和 Synthetic wearable user data 方法。</p></section>
+                </div>
+              </div>
+            </details>
+            <div class="paper-links"><a href="https://doi.org/10.1038/s41467-025-67922-y" target="_blank" rel="noreferrer">论文页面 ↗</a><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC12855967/" target="_blank" rel="noreferrer">阅读全文 ↗</a></div>
+          </div>
+          <aside class="why"><span>PRIMARY SIGNAL</span><p>它正好连接 sensing、personal informatics 和 AI agent：展示了如何把连续传感数据从“模型输入”变成可追问、可计算、可审计的交互式分析对象。</p></aside>
+        </article>
+        <article class="paper" id="paper-p_f5e81a6a7e372cdc">
+          <div class="paper-index">02</div>
+          <div class="paper-main">
+            <div class="meta"><span>Nature Communications · 2026</span><span>5 MIN</span><span>OpenAlex 引用 0 · 2026-11-10</span></div>
+            <h3>Silicon-photonics optoacoustic sensor for fully wearable blood pressure monitoring</h3>
+            <p class="authors">Gil Gelbert、Ron Moisseev、Yoav Hazan、Tamar Harary、Daniel H. Lange、Amir Rosenthal</p>
+            <div class="plain"><small>说人话</small><p>作者把原本需要多阵元、精确对准血管的超声方案，换成一个极小的光声探头；它重新贴到手腕上仍能跟踪血压波形，但人体实验目前只有两个人。</p></div>
+            <details><summary>展开完整精读笔记 <span>+</span></summary>
+              <div class="review-sheet">
+                <div class="review-kicker"><span>FULL-TEXT NOTES</span><p>来自方法、结果、讨论与局限部分的全文核验，不是摘要改写。</p></div>
+                <div class="review-pair">
+                  <section class="review-block"><b>01</b><div><h4>研究问题</h4><p>连续无袖带血压监测需要直接、稳定地测量动脉变化。现有 PPG 多为间接估计且容易受位置和个体差异影响，超声贴片虽然更直接，却依赖阵列和精确对准小动脉。</p></div></section>
+                  <section class="review-block"><b>02</b><div><h4>方法与样本</h4><p>系统用硅光子声学探测器 SPADE 接收光激发动脉产生的光声信号，从信号时延估计桡动脉内径。作者先用仿体和多角度、位移实验验证位置鲁棒性，再在一男一女两名志愿者上进行 3 个月、120 段各 10 秒的测量，与 Finapres 袖带/指套参考系统比较；每人只在最初校准一次。</p></div></section>
+                </div>
+                <section class="review-contributions"><div class="review-title"><b>03</b><h4>主要贡献</h4><span>作者实际交付了什么</span></div><ol><li><span>01</span><p>用单个微型、近全向的硅光子探测元件替代密集超声阵列，直接读取动脉内腔边界。</p></li><li><span>02</span><p>在平移、旋转和反复移除重贴条件下展示较低的直径估计波动，说明方案对佩戴位置更宽容。</p></li><li><span>03</span><p>在两名被试的 120 次测量中得到舒张压 2.6 mmHg、收缩压 4.7 mmHg 的平均绝对差。</p></li></ol></section>
+                <section class="review-delta"><div class="review-title"><b>04</b><h4>相较以往的 delta</h4><span>过去做法 → 本文改变 → 仍需付出的代价</span></div><p>以往可穿戴超声依靠聚焦或多阵元找准血管，复杂度和位置敏感性随血管变小而增加；本文利用血液相对周围组织更强的光声对比度，加上微型近全向探测器，用单元件完成测量。代价是当前仍需要桌面激光器、耦合胶和个体初始校准。</p></section>
+                <div class="review-pair judgement">
+                  <section class="review-block evidence"><b>05</b><div><h4>证据够不够</h4><p>仿体、与压电探头的对照以及跨三个月重复贴附共同支持“位置鲁棒”这一工程主张；血压误差也有同步参考设备。不过临床数据只有两人，120 个短片段并不等于 120 个独立受试者，不能据此宣称达到普遍临床可用性。</p></div></section>
+                  <section class="review-block limitations"><b>06</b><div><h4>局限与不可外推之处</h4><p>人体样本 n=2，主要在静坐和短暂核心发力状态下测试；每人仍需一次校准；参考系统本身有误差；装置尚包含体积较大的激光和光学读出，离真正日常佩戴还有明显工程距离。作者也明确承认需要超过 85 人的标准化临床验证。</p></div></section>
+                </div>
+                <div class="review-bottom">
+                  <section><span>WHY READ</span><h4>为什么值得你读</h4><p>这是很典型的 sensing 系统论文：创新不是换一个分类器，而是利用新的物理对比机制改变对准、阵列规模和可穿戴化之间的设计空间。</p></section>
+                  <section><span>READING PATH</span><h4>如果打开原文，优先看这里</h4><p>重点看 Fig. 5 的旋转对照、Fig. 6 的血压验证，以及 Discussion 第 247–271 段对位置鲁棒性、n=2 和桌面激光器的坦诚讨论。</p></section>
+                </div>
+              </div>
+            </details>
+            <div class="paper-links"><a href="https://doi.org/10.1038/s41467-026-77580-3" target="_blank" rel="noreferrer">论文页面 ↗</a><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC13680363/" target="_blank" rel="noreferrer">阅读全文 ↗</a></div>
+          </div>
+          <aside class="why"><span>PRIMARY SIGNAL</span><p>这是很典型的 sensing 系统论文：创新不是换一个分类器，而是利用新的物理对比机制改变对准、阵列规模和可穿戴化之间的设计空间。</p></aside>
+        </article>
+        <article class="paper" id="paper-p_1a21c67395ea6e02">
+          <div class="paper-index">05</div>
+          <div class="paper-main">
+            <div class="meta"><span>npj Biological Timing and Sleep · 2026</span><span>4 MIN</span><span>OpenAlex 引用 0 · 2026-11-10</span></div>
+            <h3>Five wearable sensors for objective measurement of near work and light exposure</h3>
+            <p class="authors">Raman Prasad Sah、Nebee Yohannes、Pavan Narra、Lisa A. Ostrin</p>
+            <div class="plain"><small>说人话</small><p>同一个人、同一天戴着五种设备，测出来的“近距离用眼时间”和室内光照仍会不一样；研究者选哪种传感器，会直接改变最后得到的行为结论。</p></div>
+            <details><summary>展开完整精读笔记 <span>+</span></summary>
+              <div class="review-sheet">
+                <div class="review-kicker"><span>FULL-TEXT NOTES</span><p>来自方法、结果、讨论与局限部分的全文核验，不是摘要改写。</p></div>
+                <div class="review-pair">
+                  <section class="review-block"><b>01</b><div><h4>研究问题</h4><p>近视研究越来越依赖可穿戴设备估计近距离用眼和光照，但不同佩戴位置、量程和采样方式的数据能否互相替代并不清楚，自我活动日志也可能系统性偏差。</p></div></section>
+                  <section class="review-block"><b>02</b><div><h4>方法与样本</h4><p>30 名成年人在自然生活中连续约 14 小时同时佩戴两种眼镜式距离/光照传感器和三种腕式光照传感器，并填写活动日志。作者把距离和照度分箱，用配对的非参数统计比较设备间及设备与日志的一致性。</p></div></section>
+                </div>
+                <section class="review-contributions"><div class="review-title"><b>03</b><h4>主要贡献</h4><span>作者实际交付了什么</span></div><ol><li><span>01</span><p>在完全相同的被试和时间段内直接比较五种常用设备，避免跨研究、跨样本比较造成的混淆。</p></li><li><span>02</span><p>发现五种设备对强户外光照的判断较一致，但眼镜式设备对近距离和中距离用眼给出显著不同的时长分布。</p></li><li><span>03</span><p>证明活动日志会低估近距离用眼、并高估中距离用眼和部分户外时长，说明主观记录不能简单代替客观测量。</p></li></ol></section>
+                <section class="review-delta"><div class="review-title"><b>04</b><h4>相较以往的 delta</h4><span>过去做法 → 本文改变 → 仍需付出的代价</span></div><p>过去很多研究使用单一设备或自我日志，默认这些测量大致等价；本文让五种设备被同时佩戴，直接量化了设备选择带来的系统差异。增量不是新传感器，而是把“测量工具本身”当成需要验证的研究变量。</p></section>
+                <div class="review-pair judgement">
+                  <section class="review-block evidence"><b>05</b><div><h4>证据够不够</h4><p>同一被试同步佩戴使比较很干净，统计检验也报告了校正后的显著性和效应量。强户外光照的一致性结论可信；但由于没有真实观看距离和眼部照度的金标准，结果只能说明相互一致或不一致，不能判断哪台设备绝对更准。</p></div></section>
+                  <section class="review-block limitations"><b>06</b><div><h4>局限与不可外推之处</h4><p>样本只有 30 名健康成年人、仅记录一天且都在休斯敦；没有实验室金标准；手腕遮挡、眼镜安装角度和各设备采样周期不同。部分设备由厂商提供，通讯作者披露了与 Meta、Zeiss 和相关专利的关系。</p></div></section>
+                </div>
+                <div class="review-bottom">
+                  <section><span>WHY READ</span><h4>为什么值得你读</h4><p>它对 sensing 研究很实用：提醒我们在真实部署中，传感器位置、阈值和采样策略不是实现细节，而会改变行为标签与科学结论。</p></section>
+                  <section><span>READING PATH</span><h4>如果打开原文，优先看这里</h4><p>先看图 4–6 的同步轨迹和分箱结果，再看 Table 5 的设备规格，最后读 Discussion 中关于无金标准和设备差异的解释。</p></section>
+                </div>
+              </div>
+            </details>
+            <div class="paper-links"><a href="https://doi.org/10.1038/s44323-026-00113-0" target="_blank" rel="noreferrer">论文页面 ↗</a><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC13739900/" target="_blank" rel="noreferrer">阅读全文 ↗</a></div>
+          </div>
+          <aside class="why"><span>PRIMARY SIGNAL</span><p>它对 sensing 研究很实用：提醒我们在真实部署中，传感器位置、阈值和采样策略不是实现细节，而会改变行为标签与科学结论。</p></aside>
+        </article></section><section class="paper-section adjacent" id="adjacent"><header class="section-head"><div><span class="section-no">02</span><p>ADJACENT FIELD</p></div><h2>次要相关</h2><p>本期内容已阅读全文并永久归档。</p></header>
+        <article class="paper" id="paper-p_4bee27f7d05ad6b3">
+          <div class="paper-index">03</div>
+          <div class="paper-main">
+            <div class="meta"><span>Frontiers in Robotics and AI · 2026</span><span>5 MIN</span><span>OpenAlex 引用 0 · 2026-11-10</span></div>
+            <h3>QAMQOR: a benchmark dataset for engagement recognition in robot-assisted autism therapy</h3>
+            <p class="authors">Nazerke Rakhymbayeva、Aida Tungatarova、Zhansaule Telisheva、Anara Sandygulova</p>
+            <div class="plain"><small>说人话</small><p>这篇论文最重要的发现不是某个模型更强，而是把同一个孩子或同一场治疗的视频同时放进训练集和测试集，会让结果看起来好得不真实。</p></div>
+            <details><summary>展开完整精读笔记 <span>+</span></summary>
+              <div class="review-sheet">
+                <div class="review-kicker"><span>FULL-TEXT NOTES</span><p>来自方法、结果、讨论与局限部分的全文核验，不是摘要改写。</p></div>
+                <div class="review-pair">
+                  <section class="review-block"><b>01</b><div><h4>研究问题</h4><p>机器人辅助孤独症治疗需要识别儿童是否投入互动，但公开数据少、样本小，很多论文随机切视频帧，导致同一儿童或同一会话泄漏到训练和测试两边。</p></div></section>
+                  <section class="review-block"><b>02</b><div><h4>方法与样本</h4><p>QAMQOR 收集了 34 名 3–12 岁孤独症儿童与 NAO 机器人进行治疗活动的 187 个会话、约 47 小时视频，并提取脸、身体和手部姿态特征。作者定义随机、儿童独立、会话独立和活动独立四种划分，统一比较逻辑回归、树模型、时序 XGBoost、LSTM 和 TCN，并单独测试类别平衡。</p></div></section>
+                </div>
+                <section class="review-contributions"><div class="review-title"><b>03</b><h4>主要贡献</h4><span>作者实际交付了什么</span></div><ol><li><span>01</span><p>公开一个真实治疗环境中的参与度数据集，并随数据给出防泄漏的标准化划分。</p></li><li><span>02</span><p>量化评估协议的影响：多分类任务中，不同划分造成的 macro-F1 变化约 0.12，而可学习分类器之间只有约 0.07。</p></li><li><span>03</span><p>显示儿童独立划分接近机会水平，且在同等、未调参条件下，LSTM/TCN 没有优于简单树模型。</p></li></ol></section>
+                <section class="review-delta"><div class="review-title"><b>04</b><h4>相较以往的 delta</h4><span>过去做法 → 本文改变 → 仍需付出的代价</span></div><p>过去数据集往往只提供数据，论文各自随机划分并报告一个漂亮数字；QAMQOR 把“能否泛化到新儿童、新会话和新活动”写进基准协议。增量是把部署条件固化为评估制度，而不是再发明一个网络。</p></section>
+                <div class="review-pair judgement">
+                  <section class="review-block evidence"><b>05</b><div><h4>证据够不够</h4><p>34 名儿童、187 个真实会话比常见小型 HRI 实验更贴近部署，四种划分和多类模型能直接展示泄漏效应。结果也诚实地暴露了模型几乎不可用的儿童独立表现。但深度模型未专门调参，所以不能得出“深度学习无用”的一般结论。</p></div></section>
+                  <section class="review-block limitations"><b>06</b><div><h4>局限与不可外推之处</h4><p>独立参与者仍只有 34 人，性别极不均衡（32 男、2 女），姿态按 1 fps 采样且主要使用视频关键点；行为和年龄异质性大，模型没有做个体校准；当前性能不足以让机器人对陌生儿童自动调整治疗。</p></div></section>
+                </div>
+                <div class="review-bottom">
+                  <section><span>WHY READ</span><h4>为什么值得你读</h4><p>它是 HRI/sensing 评估设计的好例子：研究贡献可以是揭示数据切分比模型结构更重要，并把生态有效性写入 benchmark。</p></section>
+                  <section><span>READING PATH</span><h4>如果打开原文，优先看这里</h4><p>看 Table 2 的队列结构、四种 evaluation protocols、Fig. 5 与 Sections 5.2/5.6 的模型比较，以及 Discussion 6.1 对实际部署的解释。</p></section>
+                </div>
+              </div>
+            </details>
+            <div class="paper-links"><a href="https://doi.org/10.3389/frobt.2026.1868211" target="_blank" rel="noreferrer">论文页面 ↗</a><a href="https://www.frontiersin.org/journals/robotics-and-ai/articles/10.3389/frobt.2026.1868211/full" target="_blank" rel="noreferrer">阅读全文 ↗</a></div>
+          </div>
+          <aside class="why"><span>ADJACENT FIELD</span><p>它是 HRI/sensing 评估设计的好例子：研究贡献可以是揭示数据切分比模型结构更重要，并把生态有效性写入 benchmark。</p></aside>
+        </article></section><section class="paper-section landmark" id="heavyweight"><header class="section-head"><div><span class="section-no">03</span><p>LANDMARK READ</p></div><h2>重要文献</h2><p>本期内容已阅读全文并永久归档。</p></header>
+        <article class="paper" id="paper-p_e1401bb657deafba">
+          <div class="paper-index">04</div>
+          <div class="paper-main">
+            <div class="meta"><span>Nature · 2026</span><span>6 MIN</span><span>OpenAlex 引用 1 · 2026-11-10</span></div>
+            <h3>Opportunistically Detecting Signs of Hypertension on a Consumer Smartwatch</h3>
+            <p class="authors">Paolo Di Achille、Lawrence Cai、Jiang Wu、Mingwu Gao、Bhavna Daryani、Jonathan Wang、Utkarsh Khanna、Ho Ko、Anupam Pathak、Mark Malhotra、Shwetak Patel、Jacqueline B. Shreibati、Stephen P. Juraschek、Pramod Rudrapatna、Matthew Thompson、Ming-Zher Poh</p>
+            <div class="plain"><small>说人话</small><p>这块手表不尝试报出你此刻的血压，而是连续看一周的脉搏光学信号和动作，判断你是否可能长期偏高；它比一次门诊测量多抓到一些人，但仍漏掉约三分之一病例。</p></div>
+            <details><summary>展开完整精读笔记 <span>+</span></summary>
+              <div class="review-sheet">
+                <div class="review-kicker"><span>FULL-TEXT NOTES</span><p>来自方法、结果、讨论与局限部分的全文核验，不是摘要改写。</p></div>
+                <div class="review-pair">
+                  <section class="review-block"><b>01</b><div><h4>研究问题</h4><p>高血压筛查依赖袖带，单次门诊测量会受白大衣效应影响，也会漏掉隐匿性高血压。过去无袖带方案常估计瞬时血压，受动作、接触压力和个体差异影响，并且常用家庭血压而非 24 小时动态血压作标签。</p></div></section>
+                  <section class="review-block"><b>02</b><div><h4>方法与样本</h4><p>研究把 Pixel Watch 3 的 PPG 与加速度波形编码成个体表示，再用身高和逻辑回归判断高血压状态。前瞻性多中心队列在 5 个美国站点招募 296 人，196 人有完整门诊和 24 小时动态血压数据并进入分析；参与者在自由生活中佩戴手表约 7 天，并与动态血压、家庭血压和门诊血压逐一比较。</p></div></section>
+                </div>
+                <section class="review-contributions"><div class="review-title"><b>03</b><h4>主要贡献</h4><span>作者实际交付了什么</span></div><ol><li><span>01</span><p>把目标从估计某一时刻的收缩压/舒张压，改成从多日传感数据识别持续性高血压状态。</p></li><li><span>02</span><p>同时利用 PPG 和加速度波形，而不只是用加速度筛选静止片段，也不要求先用袖带为个人校准。</p></li><li><span>03</span><p>以 24 小时动态血压为金标准，得到 65.8% 灵敏度、90.0% 特异度和 80.6% 阳性预测值；单次门诊筛查对应为 55.3%、90.0% 和 77.8%。</p></li></ol></section>
+                <section class="review-delta"><div class="review-title"><b>04</b><h4>相较以往的 delta</h4><span>过去做法 → 本文改变 → 仍需付出的代价</span></div><p>此前无袖带研究多追求逐点血压数值，容易被波形噪声和校准拖累；本文退一步做长期状态筛查，并用自由生活的一周信号和动态血压真值验证。这个重构让消费手表更可能成为筛查入口，但它不是血压计，也不能完成诊断。</p></section>
+                <div class="review-pair judgement">
+                  <section class="review-block evidence"><b>05</b><div><h4>证据够不够</h4><p>前瞻、多中心、自由生活、与同一批人的 24 小时动态血压头对头比较，是很强的临床转化设计；肤色分布也较多样。另一方面，只有 196/296 人进入最终分析，缺失主要来自动态血压；灵敏度置信区间较宽，且 65.8% 本身说明漏诊仍多。</p></div></section>
+                  <section class="review-block limitations"><b>06</b><div><h4>局限与不可外推之处</h4><p>排除了已知心血管病和正在服降压药的人，不能外推到治疗人群；只测试一种手表和美国站点；34% 招募者因数据不完整未进入主要分析；模型输出是风险提示而非诊断，尚未证明提示能改善就医、血压控制或心血管结局。阅读全文使用公开的 medRxiv 完整稿，并与 Nature 2026 年 11 月 5 日的同行评审早期版本题录和主要结果交叉核对。</p></div></section>
+                </div>
+                <div class="review-bottom">
+                  <section><span>WHY READ</span><h4>为什么值得你读</h4><p>这是一篇 sensing 目标函数设计的代表作：与其硬做不稳定的连续回归，不如重新定义临床上真正有价值、且传感器能可靠承担的筛查任务。</p></section>
+                  <section><span>READING PATH</span><h4>如果打开原文，优先看这里</h4><p>优先看 prospective validation study、Fig. 1 的流程、与门诊/家庭血压的头对头结果、error analysis，以及 Discussion 中对缺失数据和适用人群的限制。</p></section>
+                </div>
+              </div>
+            </details>
+            <div class="paper-links"><a href="https://doi.org/10.1038/s41586-026-11336-3" target="_blank" rel="noreferrer">论文页面 ↗</a><a href="https://www.medrxiv.org/content/10.64898/2025.12.10.25341972v1.full" target="_blank" rel="noreferrer">阅读全文 ↗</a></div>
+          </div>
+          <aside class="why"><span>LANDMARK READ</span><p>这是一篇 sensing 目标函数设计的代表作：与其硬做不稳定的连续回归，不如重新定义临床上真正有价值、且传感器能可靠承担的筛查任务。</p></aside>
+        </article></section><section class="paper-section random" id="serendipity"><header class="section-head"><div><span class="section-no">04</span><p>SERENDIPITY</p></div><h2>随机看一篇</h2><p>本期内容已阅读全文并永久归档。</p></header>
+        <article class="paper" id="paper-p_a2b9a04907675c47">
+          <div class="paper-index">06</div>
+          <div class="paper-main">
+            <div class="meta"><span>Nature Communications · 2026</span><span>5 MIN</span><span>OpenAlex 引用 0 · 2026-11-10</span></div>
+            <h3>A multiplexed wearable microfluidic platform for non-invasive sweat-inspired monitoring of plant guttation biomarkers</h3>
+            <p class="authors">Bing Xue、Ziyang Huang、Zhiyuan Li、Xue Sun、Zhefu Shen、Junyi Luo、Kejing Ren、Wei Zhang、Ruochen Yang、Xiao Xiao、Xiaoqian Su、Shuoyan Liu、Anxu Ge、Jinghua Li、Ishara Dharmasena、Tedrick Thomas Salim Lew、Changsheng Wu</p>
+            <div class="plain"><small>说人话</small><p>作者把人类汗液贴片的思路搬到了叶子上：设备接住植物自然渗出的微小液滴，连续测钾、钠和葡萄糖，让植物的盐胁迫和光照反应可以被实时看见。</p></div>
+            <details><summary>展开完整精读笔记 <span>+</span></summary>
+              <div class="review-sheet">
+                <div class="review-kicker"><span>FULL-TEXT NOTES</span><p>来自方法、结果、讨论与局限部分的全文核验，不是摘要改写。</p></div>
+                <div class="review-pair">
+                  <section class="review-block"><b>01</b><div><h4>研究问题</h4><p>植物内部液体能反映营养和胁迫，但传统方法需要穿刺或间歇取样；叶缘自然分泌的吐水液虽无创，却体积小、出现不连续且很快蒸发。</p></div></section>
+                  <section class="review-block"><b>02</b><div><h4>方法与样本</h4><p>PlantIonics 用仿猪笼草表面的楔形亲/疏水微流道，在约 0.6 秒内把吐水液单向送到钾、钠、葡萄糖电化学传感阵列；0.16 g 柔性电路每 2 秒采样并通过 BLE 传输。作者先用人工溶液和台式电化学工作站校准，再在大麦上做钾、盐和光照实验，并在黄瓜、番茄上验证多日佩戴。</p></div></section>
+                </div>
+                <section class="review-contributions"><div class="review-title"><b>03</b><h4>主要贡献</h4><span>作者实际交付了什么</span></div><ol><li><span>01</span><p>建立不穿刺叶片的吐水液连续采集机制，把间歇微液滴转成可刷新的传感界面。</p></li><li><span>02</span><p>把三种生化指标、温湿度补偿、柔性读出和无线传输整合为完整的叶上系统。</p></li><li><span>03</span><p>在多日实验中观察到根部离子处理和光照变化对应的动态生化响应，并验证七天贴附对叶片形态和光合作用影响有限。</p></li></ol></section>
+                <section class="review-delta"><div class="review-title"><b>04</b><h4>相较以往的 delta</h4><span>过去做法 → 本文改变 → 仍需付出的代价</span></div><p>以往植物可穿戴多测温湿度、应变、挥发物或需要刺入组织；本文借用人体汗液 sensing 的系统思路，利用植物自己排出的液体做无创、连续、多指标化学监测。代价是只有会稳定吐水、且根压高和蒸腾低时才能工作。</p></section>
+                <div class="review-pair judgement">
+                  <section class="review-block evidence"><b>05</b><div><h4>证据够不够</h4><p>从微流体仿真、台式仪器对照、干扰测试、12 小时漂移，到三种植物的多日实验形成了较完整的系统验证链；大麦的重复测量统计显示处理效应。但关键压力实验多为每组约 5 株、环境受控，离真实田间规模仍远。</p></div></section>
+                  <section class="review-block limitations"><b>06</b><div><h4>局限与不可外推之处</h4><p>依赖吐水现象，在低根压、高蒸腾或干燥环境中可能没有样本；目前只有钾、钠和葡萄糖三类指标；实验主要在室内受控条件和少量植株上完成，设备耐候性、长期校准、规模化网络和田间维护尚未验证。</p></div></section>
+                </div>
+                <div class="review-bottom">
+                  <section><span>WHY READ</span><h4>为什么值得你读</h4><p>这是很好的科研视野扩展：同一套 wearable/microfluidic/sensing 设计语言可以从人体迁移到植物，并暴露出完全不同的采样可用性约束。</p></section>
+                  <section><span>READING PATH</span><h4>如果打开原文，优先看这里</h4><p>看 Fig. 1 的整体架构、Fig. 4 的无线系统验证、Fig. 5 的多日胁迫实验，以及 Discussion 对“只有产生吐水液时才适用”的限制。</p></section>
+                </div>
+              </div>
+            </details>
+            <div class="paper-links"><a href="https://doi.org/10.1038/s41467-026-77955-6" target="_blank" rel="noreferrer">论文页面 ↗</a><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC13720148/" target="_blank" rel="noreferrer">阅读全文 ↗</a></div>
+          </div>
+          <aside class="why"><span>SERENDIPITY</span><p>这是很好的科研视野扩展：同一套 wearable/microfluidic/sensing 设计语言可以从人体迁移到植物，并暴露出完全不同的采样可用性约束。</p></aside>
+        </article></section></main>
+<footer><div><span class="brand-mark">RD</span><p><strong>Research Daily</strong><br>读全文，讲人话，不重复。</p></div><p>6 PAPERS · 31 MINUTES<br>ARCHIVED · 2026-11-10</p><a href="#top">BACK TO TOP ↑</a></footer><script src="../../app.js"></script><script src="../../feedback.js"></script></body></html>

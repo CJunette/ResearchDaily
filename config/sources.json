@@ -1,0 +1,38 @@
+{
+  "searches": [
+    {"track": "hci_ubicomp_sensing", "query": "human computer interaction ubiquitous computing sensing"},
+    {"track": "hci_ubicomp_sensing", "query": "wearable mobile ambient multimodal sensing"},
+    {"track": "hci_ubicomp_sensing", "query": "RF radar acoustic physiological sensing interaction"},
+    {"track": "digital_health", "query": "digital health wearable sensing digital biomarkers"},
+    {"track": "robotics_hri", "query": "human robot interaction assistive social robotics"},
+    {"track": "ai_vision", "query": "multimodal foundation model computer vision sensing"},
+    {"track": "broad_impact", "query": "artificial intelligence human behaviour perspective review"},
+    {"track": "serendipity", "query": "interdisciplinary scientific breakthrough new method"}
+  ],
+  "venues": {
+    "high_priority": [
+      "CHI", "UIST", "IMWUT", "UbiComp", "CSCW", "PACMHCI", "DIS", "IUI",
+      "MobiSys", "MobiCom", "SenSys", "IPSN", "PerCom", "ISWC", "ASSETS",
+      "ICLR", "NeurIPS", "ICML", "CVPR", "ICCV", "ECCV", "ACL", "EMNLP",
+      "HRI", "RSS", "CoRL", "ICRA", "IROS", "CHIL", "ML4H", "JAMIA",
+      "npj Digital Medicine", "Nature Medicine", "The Lancet Digital Health",
+      "Nature", "Science", "PNAS", "Cell", "Nature Human Behaviour",
+      "Nature Machine Intelligence", "Communications of the ACM"
+    ],
+    "secondary": [
+      "MobileHCI", "TEI", "AAAI", "AMIA", "JMIR", "IEEE Pervasive Computing",
+      "ACM Transactions on Computer-Human Interaction"
+    ]
+  },
+  "official_sources": [
+    {"name": "ACM Digital Library", "url": "https://dl.acm.org/", "coverage": "CHI, UIST, IMWUT/UbiComp, CSCW/PACMHCI, DIS, IUI, MobileHCI, ASSETS, TEI"},
+    {"name": "OpenReview", "url": "https://openreview.net/", "coverage": "ICLR and selected ML conferences/workshops"},
+    {"name": "CVF Open Access", "url": "https://openaccess.thecvf.com/", "coverage": "CVPR and ICCV full text"},
+    {"name": "PubMed", "url": "https://pubmed.ncbi.nlm.nih.gov/", "coverage": "Health and biomedical literature"},
+    {"name": "arXiv", "url": "https://arxiv.org/", "coverage": "Recent preprints; never treated as peer reviewed without verification"},
+    {"name": "OpenAlex", "url": "https://openalex.org/", "coverage": "Discovery, identifiers, citation counts, and open-access locations"},
+    {"name": "Crossref", "url": "https://www.crossref.org/", "coverage": "DOI metadata and publication identity"},
+    {"name": "Semantic Scholar", "url": "https://www.semanticscholar.org/", "coverage": "Citation graph and open-access location cross-check"}
+  ]
+}
+
