@@ -47,6 +47,10 @@ python3 scripts/research_daily.py export-site --date 2026-11-10
 
 ## 网页和反馈系统
 
+每日固定显示四栏：核心兴趣 2–3 篇（会议优先）、邻近领域 1–2 篇、重量级内容 1–2 篇（Nature/Science 优先）、其他领域 1–2 篇。先满足最低 `2+1+1+1`，再在 30 分钟目标、35 分钟上限内加入额外文章。缺项会保留栏目并明确说明。
+
+每篇新审阅在 `reviewer_notes` 中单独写一行 `topic: specific_topic`。同一研究问题须使用相同标签，生成器默认每栏最多一篇同主题、全刊最多两篇；选题时还需与前七期比较，轮换方向。不同来源或不同会议不等于不同主题。45 分钟是生成耗时目标，与读者阅读时间分别记录。
+
 网页中的每篇论文都有一个反馈栏，支持“更关注 / 多来这类 / 少来这类 / 有问题”，也可以填写具体问题，并标注内容来自网页、Gemini 提问片段或其他笔记。只有用户主动提交的内容会被保存。
 
 反馈通过 Worker 的 `/api/feedback` 写入 D1，并通过站点 MCP 暴露 `list_research_feedback`，供后续早报任务调整选题排序和精读重点。系统不会自动抓取 Gemini 的完整对话；如果希望利用 Gemini 中的关注点，可以手动粘贴相关问题片段。
@@ -60,6 +64,8 @@ node sites/research-daily/scripts/preview-worker.mjs 4173
 ```
 
 构建产物写入 `sites/research-daily/dist/`，其中包含 Worker 入口、站点资源和 D1 migration。`dist/` 是可再生成的发布产物，不需要手工编辑。
+
+正式数据库迁移以 `sites/research-daily/drizzle/` 的 SQL 和 `meta/_journal.json` 为准。Sites 打包工具将它们放入 `dist/.openai/drizzle/` 后应用；旧的 `migrations/` 文件仅保留作历史参考，不能替代该发布路径。
 
 ## 测试
 

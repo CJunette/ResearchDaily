@@ -70,6 +70,9 @@ document.querySelectorAll('article.paper').forEach((article) => {
         headers: {'content-type': 'application/json'},
         body: JSON.stringify({paperId, title, briefDate: feedbackBriefDate(), signal: selectedSignal, note, source}),
       });
+      if (!response.headers.get('content-type')?.includes('application/json')) {
+        throw new Error('服务返回异常页面，请刷新登录状态后重试；输入内容已保留。');
+      }
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || '保存失败');
       panel.querySelector('textarea').value = '';

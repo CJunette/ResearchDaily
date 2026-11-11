@@ -85,7 +85,10 @@ function serveAsset(pathname) {
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
-    if (url.pathname === '/api/feedback' && request.method === 'POST') return saveFeedback(request,env);
+    if (url.pathname === '/api/feedback' && request.method === 'POST') {
+      try { return await saveFeedback(request,env); }
+      catch (error) { console.error('Feedback storage failed:',error.message); return json({error:'反馈服务暂时不可用，请稍后重试；输入内容已保留。'},503); }
+    }
     if (url.pathname === '/api/feedback' && request.method === 'GET') {
       try { return json({feedback:await readFeedback(request,env,{paper_id:url.searchParams.get('paper_id'),limit:url.searchParams.get('limit')})}); }
       catch (error) { return json({error:error.message},401); }

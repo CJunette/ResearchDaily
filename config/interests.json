@@ -3,7 +3,7 @@
     "timezone": "Europe/London",
     "target_minutes": 30,
     "max_minutes": 35,
-    "max_items": 6,
+    "max_items": 9,
     "lookback_days": 45,
     "min_quality_score": 7.0
   },
@@ -13,7 +13,15 @@
     "adjacent_min": 1,
     "adjacent_max": 2,
     "heavyweight_target": 1,
-    "serendipity_max": 1
+    "heavyweight_max": 2,
+    "serendipity_min": 1,
+    "serendipity_max": 2
+  },
+  "diversity": {
+    "max_same_topic_per_section": 1,
+    "max_same_topic_per_brief": 2,
+    "candidate_lookback_fallback_days": 180,
+    "generation_target_minutes": 45
   },
   "ranking": {
     "relevance": 0.35,
@@ -69,7 +77,8 @@
       "weight": 0.15,
       "role": "serendipity",
       "keywords": [
-        "novel scientific instrument", "unexpected interdisciplinary method", "new research paradigm"
+        "novel scientific instrument", "unexpected interdisciplinary method", "new research paradigm",
+        "ecology", "evolution", "collective behavior", "materials", "chemistry", "astronomy", "mathematics"
       ]
     }
   },

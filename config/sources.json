@@ -1,13 +1,16 @@
 {
   "searches": [
-    {"track": "hci_ubicomp_sensing", "query": "human computer interaction ubiquitous computing sensing"},
-    {"track": "hci_ubicomp_sensing", "query": "wearable mobile ambient multimodal sensing"},
-    {"track": "hci_ubicomp_sensing", "query": "RF radar acoustic physiological sensing interaction"},
-    {"track": "digital_health", "query": "digital health wearable sensing digital biomarkers"},
-    {"track": "robotics_hri", "query": "human robot interaction assistive social robotics"},
-    {"track": "ai_vision", "query": "multimodal foundation model computer vision sensing"},
-    {"track": "broad_impact", "query": "artificial intelligence human behaviour perspective review"},
-    {"track": "serendipity", "query": "interdisciplinary scientific breakthrough new method"}
+    {"track": "hci_ubicomp_sensing", "query": "tangible interaction user interface", "topic": "interaction_techniques"},
+    {"track": "hci_ubicomp_sensing", "query": "accessibility collaborative work human computer interaction", "topic": "social_accessibility"},
+    {"track": "hci_ubicomp_sensing", "query": "wireless acoustic sensing", "topic": "sensing_systems"},
+    {"track": "digital_health", "query": "clinical trial digital intervention", "topic": "clinical_intervention"},
+    {"track": "robotics_hri", "query": "robot manipulation human robot collaboration", "topic": "robotics"},
+    {"track": "ai_vision", "query": "visual geometry representation learning", "topic": "vision"},
+    {"track": "broad_impact", "query": "quantum error correction", "topic": "quantum_science"},
+    {"track": "broad_impact", "query": "genome evolution", "topic": "biology"},
+    {"track": "serendipity", "query": "collective behavior ecology", "topic": "ecology"},
+    {"track": "serendipity", "query": "self healing materials", "topic": "materials"},
+    {"track": "serendipity", "query": "exoplanet atmosphere", "topic": "astronomy"}
   ],
   "venues": {
     "high_priority": [

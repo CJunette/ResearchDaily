@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Research Daily · 2026-11-11</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;600;700;900&family=Noto+Serif+SC:wght@600;700;900&display=swap" rel="stylesheet"><link rel="stylesheet" href="../../styles.css"></head>
+<body><header class="masthead"><a class="brand" href="../"><span class="brand-mark">RD</span><span><strong>RESEARCH DAILY</strong><small>FULL-TEXT REVIEWED</small></span></a><div class="issue"><a class="archive-link" href="../">综合目录</a>&nbsp;&nbsp;·&nbsp;&nbsp;2026-11-11</div></header>
+<main><section class="hero archive-hero"><div class="hero-copy"><p class="eyebrow">PERMANENT DAILY EDITION</p><h1>2026-11-11<br><em>学术早报</em></h1><p class="dek">共 3 篇，建议阅读 21 分钟。此页面按日期永久保存，后续早报不会覆盖本期内容。</p><div class="hero-actions"><a class="primary" href="#core">开始阅读 <span>↓</span></a><a class="ghost archive-button" href="../">查看全部日期</a></div></div><aside class="reading-map"><div class="map-head"><span>ARCHIVED EDITION</span><strong>21<span>MIN</span></strong></div><p class="archive-count">3 篇全文核验论文<br>推荐记录已写入永久去重账本</p></aside></section>
+<section class="priority"><div class="priority-label"><span>IF YOU ONLY READ TWO</span><b>只读两篇</b></div><a href="#paper-p_47b8872020bb8f10"><span>01</span><strong>让110位研究组负责人评价AI出的科研点子后，只有约四分之一被评为有趣；给AI额外提供论文概念组合，并没有比只给论文标题更讨人喜欢。</strong><i>7 min ↗</i></a><a href="#paper-p_9be939632498697f"><span>02</span><strong>鞋垫除了记录脚下压力，还能估计手臂、背部和腿部共八组肌肉的用力变化，但坐着运动和搬重物时是否可靠仍未解决。</strong><i>8 min ↗</i></a></section><section class="paper-section core" id="core"><header class="section-head"><div><span class="section-no">01</span><p>PRIMARY SIGNAL</p></div><h2>核心兴趣</h2><p>本期内容已阅读全文并永久归档。</p></header>
+        <article class="paper" id="paper-p_9be939632498697f">
+          <div class="paper-index">01</div>
+          <div class="paper-main">
+            <div class="meta"><span>Proceedings of the 32nd Annual International Conference on Mobile Computing and Networking (MobiCom 2026) · 2026</span><span>8 MIN</span><span>OpenAlex 引用 0 · 2026-11-11</span></div>
+            <h3>Exploring the Feasibility of Full-Body Muscle Activation Sensing with Insole Pressure Sensors</h3>
+            <p class="authors">Hao Zhou、Mahanth Gowda</p>
+            <div class="plain"><small>说人话</small><p>鞋垫除了记录脚下压力，还能估计手臂、背部和腿部共八组肌肉的用力变化，但坐着运动和搬重物时是否可靠仍未解决。</p></div>
+            <details><summary>展开完整精读笔记 <span>+</span></summary>
+              <div class="review-sheet">
+                <div class="review-kicker"><span>FULL-TEXT NOTES</span><p>来自方法、结果、讨论与局限部分的全文核验，不是摘要改写。</p></div>
+                <div class="review-pair">
+                  <section class="review-block"><b>01</b><div><h4>研究问题</h4><p>肌电电极能直接记录肌肉电活动，却需要多处贴附；相机估计又受遮挡、光照和隐私限制。脚底承受全身平衡调整，能否从这里间接估计身体不同部位的肌肉活动？</p></div></section>
+                  <section class="review-block"><b>02</b><div><h4>方法与样本</h4><p>双脚共36个压力通道以20 Hz采样；网络学习哪些脚底区域更有用，以身高、体重、年龄、鞋码和性别调节特征，再用时序模型预测八组肌肉的归一化肌电信号。30名22—37岁参与者完成15类动作，约27小时同步压力与肌电数据；主要采用留一人测试，并另做留一动作测试、部件消融、鞋型与地面测试及手机运行测量。</p></div></section>
+                </div>
+                <section class="review-contributions"><div class="review-title"><b>03</b><h4>主要贡献</h4><span>作者实际交付了什么</span></div><ol><li><span>01</span><p>把鞋垫压力的预测目标从身体外部姿态扩展到八组肌肉活动，并提供同步肌电对照。</p></li><li><span>02</span><p>以区域权重、个人基本资料调节和压力增强改善跨人泛化；移除区域权重后RMSE恶化8.65%。</p></li></ol></section>
+                <section class="review-delta"><div class="review-title"><b>04</b><h4>相较以往的 delta</h4><span>过去做法 → 本文改变 → 仍需付出的代价</span></div><p>此前Muscles in Action从视频或其运动表示预测肌电（作者项目页：https://musclesinaction.cs.columbia.edu/）；压力类工作主要重建姿态。本文改用鞋内压力，留一人RMSE为0.025、相关系数0.589，表3的视频/运动表示基线分别为0.035/0.031；相对0.031约降低19%。准确变化是更换间接观测入口并学习跨人映射，不能解读为直接测量了所有肌肉。代价是依赖脚底受力与身体活动之间的联系。</p></section>
+                <div class="review-pair judgement">
+                  <section class="review-block evidence"><b>05</b><div><h4>证据够不够</h4><p>留一人及留一动作测试比随机切片更有说服力；未见动作RMSE为0.027、相关系数0.504，显示仍有明显预测误差。低RMSE部分来自不活动肌肉接近零，不能单独当作高精度证明。30分钟日常任务案例排除了搬重物片段；45分钟深蹲案例的不平衡分数相关系数0.92，只支持受控情况下的代理估计，未证明能预测伤病或改善康复。论文正式收录MobiCom 2026，开放作者稿含同一DOI及审稿致谢。</p></div></section>
+                  <section class="review-block limitations"><b>06</b><div><h4>局限与不可外推之处</h4><p>只有年轻成年人、八组肌肉和有限动作；归一化误差不是绝对肌力误差。理论上的正向联系不保证压力到肌肉活动有唯一解，这是本次审阅的推断。坐姿、受限姿势、显著外部负重及患者泛化仍待研究。手机连续推理耗电约10%—12%/小时，短案例不能证明长期佩戴和临床效益。</p></div></section>
+                </div>
+                <div class="review-bottom">
+                  <section><span>WHY READ</span><h4>为什么值得你读</h4><p>符合新传感入口、低负担穿戴与真实环境验证的兴趣。重点看作者如何把生物力学假设转成实验，再检查哪些现实情况被排除。OpenAlex该合并记录引用0次（2026-11-11，https://api.openalex.org/works/https://doi.org/10.1145/3795866.3796700）；Crossref和全文身份核对一致，查询时未见撤稿标记或更正关系。</p></section>
+                  <section><span>READING PATH</span><h4>如果打开原文，优先看这里</h4><p>§2.2的假设、§5的数据与划分、表1—3，以及§6.8和§7；不要只看摘要里的“全身”和0.025。</p></section>
+                </div>
+              </div>
+            </details>
+            <div class="paper-links"><a href="https://doi.org/10.1145/3795866.3796700" target="_blank" rel="noreferrer">论文页面 ↗</a><a href="https://arxiv.org/html/2602.10442v1" target="_blank" rel="noreferrer">阅读全文 ↗</a></div>
+          </div>
+          <aside class="why"><span>PRIMARY SIGNAL</span><p>符合新传感入口、低负担穿戴与真实环境验证的兴趣。重点看作者如何把生物力学假设转成实验，再检查哪些现实情况被排除。OpenAlex该合并记录引用0次（2026-11-11，https://api.openalex.org/works/https://doi.org/10.1145/3795866.3796700）；Crossref和全文身份核对一致，查询时未见撤稿标记或更正关系。</p></aside>
+        </article></section><section class="paper-section adjacent" id="adjacent"><header class="section-head"><div><span class="section-no">02</span><p>ADJACENT FIELD</p></div><h2>邻近领域</h2><p>本期内容已阅读全文并永久归档。</p></header>
+        <article class="paper" id="paper-p_5e40a6b644f28c5e">
+          <div class="paper-index">02</div>
+          <div class="paper-main">
+            <div class="meta"><span>npj Robotics · 2026</span><span>6 MIN</span><span>OpenAlex 引用 0 · 2026-11-11</span></div>
+            <h3>A tongue-controlled FES-robotic exoskeleton restores hand function in users with cervical spinal cord injury</h3>
+            <p class="authors">Oguzhan Kirtas、Peter H. Veltink、Rasmus L. Kæseler、Alexander L. Ammitzbøll、Ellen M. Hagen、Mostafa Mohammadi、Lotte N. S. Andreasen Struijk</p>
+            <div class="plain"><small>说人话</small><p>五位颈髓损伤者用舌头发指令，让手套帮助抓住物品、再用短时电刺激张开手，但这还不是能独立居家使用或让神经恢复的证明。</p></div>
+            <details><summary>展开完整精读笔记 <span>+</span></summary>
+              <div class="review-sheet">
+                <div class="review-kicker"><span>FULL-TEXT NOTES</span><p>来自方法、结果、讨论与局限部分的全文核验，不是摘要改写。</p></div>
+                <div class="review-pair">
+                  <section class="review-block"><b>01</b><div><h4>研究问题</h4><p>严重手部瘫痪者不一定能提供可靠肌电指令；外骨骼既要抓稳又要张开手，增加电机或弹性撑条会带来重量与阻力，持续电刺激又可能引起疲劳。</p></div></section>
+                  <section class="review-block"><b>02</b><div><h4>方法与样本</h4><p>口内15个感应线圈读取舌头推动的框架内小球，无须把装置穿刺固定在舌头上。五指手套分别由拉索闭合，手指张开交给最长2秒的功能性电刺激。5名颈髓损伤参与者在连续两天、每次最多3小时的实验中完成五类手部任务，与被动弹性张开版本及无手套基线比较；失败任务可重试，成功率按全部尝试计算。</p></div></section>
+                </div>
+                <section class="review-contributions"><div class="review-title"><b>03</b><h4>主要贡献</h4><span>作者实际交付了什么</span></div><ol><li><span>01</span><p>把非侵入舌控、多种抓握和电刺激张手组合成用户可主动指挥的辅助系统。</p></li><li><span>02</span><p>以机械闭合、电刺激张开分工，避免为两种运动各增加一套机械驱动，并在真实目标人群中比较两种原型。</p></li></ol></section>
+                <section class="review-delta"><div class="review-title"><b>04</b><h4>相较以往的 delta</h4><span>过去做法 → 本文改变 → 仍需付出的代价</span></div><p>此前舌控已用于计算机和辅助机器人，混合外骨骼也已有机械与电刺激协作；本文的具体变化是舌控统一指挥五指拉索闭合及短时电刺激张开。对照中任务成功率为96%与89%，平均完成时间12.7与13.0秒；两种手套的捏力和握力差异经多重校正均未达显著，不能写成电刺激版本全面优于被动版本。手部125克，但含控制单元系统重1155克，且仍需外部刺激设备。</p></section>
+                <div class="review-pair judgement">
+                  <section class="review-block evidence"><b>05</b><div><h4>证据够不够</h4><p>目标用户的多种实际物品任务和同人对照支持短期辅助可行性。无手套时部分参与者尚可用代偿动作完成个别任务，因此不是从绝对零能力到独立生活。部分人需要研究者摆物和稳定手腕；握力测试由实验者用手柄控制，属于辅助机械能力，不能证明舌控操作表现或内在肌力恢复。主观疲劳很低，但没有肌电或力衰减测量，不能认定客观疲劳已降低。npj Robotics正式研究论文，已同行评审。</p></div></section>
+                  <section class="review-block limitations"><b>06</b><div><h4>局限与不可外推之处</h4><p>仅5人、两天短期测试，自制问卷未标准化；未验证独立穿脱、口内长期舒适性、饮食说话兼容性或居家安全。电极位置和电流需要逐人校准，部分上肢动作仍需他人帮助。减少照护负担与康复治疗效果只是待检验的可能性。</p></div></section>
+                </div>
+                <div class="review-bottom">
+                  <section><span>WHY READ</span><h4>为什么值得你读</h4><p>把交互入口、执行器分工和用户剩余能力一起设计，适合借鉴到辅助技术与HRI研究。出版社Accesses为3910（2026-11-11读取，属页面访问指标，不等于独立读者）；OpenAlex引用0次（同日，https://api.openalex.org/works/https://doi.org/10.1038/s44182-026-00117-9）。Crossref未返回更正关系，OpenAlex无撤稿标记；这不构成绝对无问题保证。</p></section>
+                  <section><span>READING PATH</span><h4>如果打开原文，优先看这里</h4><p>图1的系统分工、图3—5的任务与力测量，Methods的Experimental design与Questionnaire design，以及讨论中关于疲劳和外部协助的段落。</p></section>
+                </div>
+              </div>
+            </details>
+            <div class="paper-links"><a href="https://doi.org/10.1038/s44182-026-00117-9" target="_blank" rel="noreferrer">论文页面 ↗</a><a href="https://www.nature.com/articles/s44182-026-00117-9" target="_blank" rel="noreferrer">阅读全文 ↗</a></div>
+          </div>
+          <aside class="why"><span>ADJACENT FIELD</span><p>把交互入口、执行器分工和用户剩余能力一起设计，适合借鉴到辅助技术与HRI研究。出版社Accesses为3910（2026-11-11读取，属页面访问指标，不等于独立读者）；OpenAlex引用0次（同日，https://api.openalex.org/works/https://doi.org/10.1038/s44182-026-00117-9）。Crossref未返回更正关系，OpenAlex无撤稿标记；这不构成绝对无问题保证。</p></aside>
+        </article></section><section class="paper-section landmark" id="heavyweight"><header class="section-head"><div><span class="section-no">03</span><p>LANDMARK READ</p></div><h2>重量级内容</h2><p>本期内容已阅读全文并永久归档。</p></header>
+        <article class="paper" id="paper-p_47b8872020bb8f10">
+          <div class="paper-index">03</div>
+          <div class="paper-main">
+            <div class="meta"><span>Proceedings of the National Academy of Sciences · 2026</span><span>7 MIN</span><span>OpenAlex 引用 65 · 2026-11-11</span></div>
+            <h3>Generating interesting scientific ideas using knowledge graphs and LLMs: Evaluations with 100 research group leaders</h3>
+            <p class="authors">Xuemei Gu、Mario Krenn</p>
+            <div class="plain"><small>说人话</small><p>让110位研究组负责人评价AI出的科研点子后，只有约四分之一被评为有趣；给AI额外提供论文概念组合，并没有比只给论文标题更讨人喜欢。</p></div>
+            <details><summary>展开完整精读笔记 <span>+</span></summary>
+              <div class="review-sheet">
+                <div class="review-kicker"><span>FULL-TEXT NOTES</span><p>来自方法、结果、讨论与局限部分的全文核验，不是摘要改写。</p></div>
+                <div class="review-pair">
+                  <section class="review-block"><b>01</b><div><h4>研究问题</h4><p>AI容易生成听起来合理的选题，但新颖、预计会被引用和研究者真正想继续了解是不同的目标，缺少跨领域资深研究者的直接评价。</p></div></section>
+                  <section class="review-block"><b>02</b><div><h4>方法与样本</h4><p>SciMuse用5800万篇论文构建概念关系，再结合研究者近期论文让GPT-4生成合作点子。267名受邀者中110人参加，评价4451个建议；每人最多48题，比较高引用预测概念对、随机概念对和只给标题三种条件。另用图特征与语言模型排序预测兴趣，补充小规模人写点子比较。全文为2026-09-24的作者稿v4，正式PNAS版于2026-11-09发表、10-15接受，出版页与DOI已核对；作者稿本身不是另一次独立同行评审。</p></div></section>
+                </div>
+                <section class="review-contributions"><div class="review-title"><b>03</b><h4>主要贡献</h4><span>作者实际交付了什么</span></div><ol><li><span>01</span><p>提供资深研究者对个性化科研点子的直接兴趣评价，而不只用模型自评或引用预测代替。</p></li><li><span>02</span><p>通过标题基线揭示增加概念图谱不必然增加点子吸引力，并区分生成与事后排序两个任务。</p></li></ol></section>
+                <section class="review-delta"><div class="review-title"><b>04</b><h4>相较以往的 delta</h4><span>过去做法 → 本文改变 → 仍需付出的代价</span></div><p>SciMON等前作优化新颖度或在较小样本中评估（邻近一手来源：https://aclanthology.org/2024.acl-long.18/）。本文扩大到110位组负责人，以兴趣评分做主要终点：均值2.40/5，24.9%为4或5分；高引用概念、随机概念、标题基线的均值分别约2.350、2.446、2.414。图谱带来可控的概念选择与可用于排序的特征，却没有改善主要生成结果；构建大图谱的复杂度不能被当作有效性证据。</p></section>
+                <div class="review-pair judgement">
+                  <section class="review-block evidence"><b>05</b><div><h4>证据够不够</h4><p>4451份评分和明确基线支持“在该设置下未发现图谱提高兴趣”，不是证明所有图谱方案都无效。高引用条件略低于随机条件只有1.94σ的弱证据，不宜断言必然更差。排序AUC约0.63—0.67说明有有限信号；按建议随机分割的验证不能单独证明对全新机构或研究者泛化。人写比较只涵盖7名博士生、6名物理领域评价者，不能证明AI达到普遍的人类科研创造力。</p></div></section>
+                  <section class="review-block limitations"><b>06</b><div><h4>局限与不可外推之处</h4><p>参与者全来自马克斯·普朗克体系，104人自然科学、仅6人社会科学或人文学科，且有自选择与未完成评分。每条建议只由合作一方评价，兴趣不等于可行性、真实新颖性、双方合作意愿或科研产出。没有实际项目落地验证，概念图谱截止2023年，可能遗漏新兴小众方向；跨领域距离也混入与评价者自身兴趣的距离。</p></div></section>
+                </div>
+                <div class="review-bottom">
+                  <section><span>WHY READ</span><h4>为什么值得你读</h4><p>适合反思如何评价科研助手和个性化推荐：把喜欢、质量与科学证据分开。对本早报的启发是用反馈调整相关性，而不把偏好当作论文真实性证据。OpenAlex合并记录引用65次（2026-11-11，https://api.openalex.org/works/https://doi.org/10.1073/pnas.2611349123），其中包含2024年起预印本历史，不能称为发表两天就获得65次引用；出版社浏览量本次未取得。OpenAlex无撤稿标记，Crossref无更正关系。</p></section>
+                  <section><span>READING PATH</span><h4>如果打开原文，优先看这里</h4><p>Contribution 3的招募与三条件基线、图4与图6，再读Contribution 4的数据切分及Discussion的机构、自选择和自我相关性偏差。</p></section>
+                </div>
+              </div>
+            </details>
+            <div class="paper-links"><a href="https://doi.org/10.1073/pnas.2611349123" target="_blank" rel="noreferrer">论文页面 ↗</a><a href="https://arxiv.org/html/2405.17044v4" target="_blank" rel="noreferrer">阅读全文 ↗</a></div>
+          </div>
+          <aside class="why"><span>LANDMARK READ</span><p>适合反思如何评价科研助手和个性化推荐：把喜欢、质量与科学证据分开。对本早报的启发是用反馈调整相关性，而不把偏好当作论文真实性证据。OpenAlex合并记录引用65次（2026-11-11，https://api.openalex.org/works/https://doi.org/10.1073/pnas.2611349123），其中包含2024年起预印本历史，不能称为发表两天就获得65次引用；出版社浏览量本次未取得。OpenAlex无撤稿标记，Crossref无更正关系。</p></aside>
+        </article></section><section class="paper-section random" id="serendipity"><header class="section-head"><div><span class="section-no">04</span><p>SERENDIPITY</p></div><h2>其他领域</h2><p>本期内容已阅读全文并永久归档。</p></header><p class="dek">本期缺项：尚无满足全文、质量及主题多样性要求的已审阅候选。</p></section></main>
+<footer><div><span class="brand-mark">RD</span><p><strong>Research Daily</strong><br>读全文，讲人话，不重复。</p></div><p>3 PAPERS · 21 MINUTES<br>ARCHIVED · 2026-11-11</p><a href="#top">BACK TO TOP ↑</a></footer><script src="../../app.js"></script><script src="../../feedback.js"></script></body></html>

@@ -72,6 +72,26 @@ class ResearchDailyTests(unittest.TestCase):
         self.assertEqual(first, second)
         self.assertEqual(self.conn.execute("SELECT COUNT(*) FROM papers").fetchone()[0], 1)
 
+    def test_minimum_sections_reserved_before_extras_and_topics_diverse(self):
+        for i, (track, topic) in enumerate([
+            ("hci_ubicomp_sensing", "rf"), ("hci_ubicomp_sensing", "rf"),
+            ("hci_ubicomp_sensing", "interaction"),
+            ("digital_health", "clinical"), ("broad_impact", "physics"),
+            ("serendipity", "ecology"),
+        ]):
+            pid = MODULE.upsert_candidate(self.conn, self.candidate(title=f"Paper {i}", doi=f"10.1000/{i}", track=track), self.sources)
+            review = self.review(pid)
+            review["reviewer_notes"] = f"topic: {topic}"
+            MODULE.save_review(self.conn, review)
+        selected = MODULE.select_rows(MODULE.eligible_rows(self.conn, self.interests), self.interests)
+        self.assertEqual([r for r, _ in selected], ["core", "core", "adjacent", "heavyweight", "serendipity"])
+        self.assertEqual(len({MODULE.topic_family(row) for _, row in selected}), 5)
+
+    def test_empty_sections_remain_visible(self):
+        page = MODULE.render_site_archive_page([], "2026-11-11", self.interests)
+        for role in ("core", "adjacent", "heavyweight", "serendipity"):
+            self.assertIn(f'id="{role}"', page)
+
     def test_abstract_only_review_is_rejected(self):
         paper_id = MODULE.upsert_candidate(self.conn, self.candidate(), self.sources)
         review = self.review(paper_id)

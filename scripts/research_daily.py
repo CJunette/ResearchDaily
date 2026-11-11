@@ -471,6 +471,26 @@ def committed_rows(conn: sqlite3.Connection, brief_date: str) -> list[tuple[str,
     return [(str(row["committed_section"]), row) for row in rows]
 
 
+def topic_family(row: sqlite3.Row) -> str:
+    """Prefer the reviewer's explicit topic; retain a fallback for older reviews."""
+    notes = row["reviewer_notes"] or ""
+    explicit = re.search(r"(?:^|\n)topic:\s*([a-z0-9_-]+)", notes, re.I)
+    if explicit:
+        return explicit.group(1).lower()
+    title = row["title"].lower()
+    for topic, terms in {
+        "health_monitoring": ("blood pressure", "hypertension", "physiological", "biomarker"),
+        "accessibility": ("accessib", "assistive", "exoskeleton", "tongue"),
+        "rf_sensing": ("wi-fi", "wifi", "radar", "radio frequency"),
+        "personal_health_data": ("wearable data", "personal health"),
+        "research_practice": ("research idea", "scientific idea", "researcher"),
+        "robot_learning": ("robot learning", "manipulation", "tactile"),
+    }.items():
+        if any(term in title for term in terms):
+            return topic
+    return "paper:" + row["id"]
+
+
 def select_rows(rows: list[sqlite3.Row], interests: dict[str, Any]) -> list[tuple[str, sqlite3.Row]]:
     pools: dict[str, list[sqlite3.Row]] = {role: [] for role in ("core", "adjacent", "heavyweight", "serendipity")}
     for row in rows:
@@ -483,12 +503,18 @@ def select_rows(rows: list[sqlite3.Row], interests: dict[str, Any]) -> list[tupl
     quotas = interests["quotas"]
     selected: list[tuple[str, sqlite3.Row]] = []
     used_minutes = 0
+    diversity = interests.get("diversity", {})
 
     def take(role: str, count: int) -> None:
         nonlocal used_minutes
         while count > 0 and pools.get(role):
             row = pools[role][0]
             minutes = int(row["reading_minutes"])
+            topic = topic_family(row)
+            if (sum(topic_family(item) == topic for _, item in selected) >= int(diversity.get("max_same_topic_per_brief", 2))
+                or sum(r == role and topic_family(item) == topic for r, item in selected) >= int(diversity.get("max_same_topic_per_section", 1))):
+                pools[role].pop(0)
+                continue
             if len(selected) >= int(brief["max_items"]):
                 return
             if used_minutes + minutes > int(brief["max_minutes"]):
@@ -501,6 +527,7 @@ def select_rows(rows: list[sqlite3.Row], interests: dict[str, Any]) -> list[tupl
     take("core", int(quotas["core_min"]))
     take("adjacent", int(quotas["adjacent_min"]))
     take("heavyweight", int(quotas["heavyweight_target"]))
+    take("serendipity", int(quotas.get("serendipity_min", 1)))
 
     core_extra = max(0, int(quotas["core_max"]) - sum(1 for role, _ in selected if role == "core"))
     adjacent_extra = max(0, int(quotas["adjacent_max"]) - sum(1 for role, _ in selected if role == "adjacent"))
@@ -522,7 +549,8 @@ def select_rows(rows: list[sqlite3.Row], interests: dict[str, Any]) -> list[tupl
         if len(selected) == before and not pools[role]:
             continue
 
-    take("serendipity", int(quotas["serendipity_max"]))
+    take("heavyweight", max(0, int(quotas.get("heavyweight_max", 2)) - sum(r == "heavyweight" for r, _ in selected)))
+    take("serendipity", max(0, int(quotas["serendipity_max"]) - sum(r == "serendipity" for r, _ in selected)))
     return selected
 
 
@@ -569,7 +597,7 @@ def render_brief(selected: list[tuple[str, sqlite3.Row]], brief_date: str, inter
         "core": "核心兴趣",
         "adjacent": "邻接领域",
         "heavyweight": "重量级与跨领域",
-        "serendipity": "随机探索",
+        "serendipity": "其他领域",
     }
     lines = [
         f"# 学术早报 · {brief_date}",
@@ -585,9 +613,9 @@ def render_brief(selected: list[tuple[str, sqlite3.Row]], brief_date: str, inter
         lines.append("")
     for role in ("core", "adjacent", "heavyweight", "serendipity"):
         group = [row for selected_role, row in selected if selected_role == role]
-        if not group:
-            continue
         lines.extend([f"## {role_names[role]}", ""])
+        if not group:
+            lines.extend(["本期缺项：尚无满足全文、质量及主题多样性要求的已审阅候选。", ""])
         for row in group:
             lines.append(format_paper(selected.index((role, row)) + 1, role, row))
     missing = []
@@ -598,6 +626,8 @@ def render_brief(selected: list[tuple[str, sqlite3.Row]], brief_date: str, inter
         missing.append("邻接领域")
     if sum(1 for role, _ in selected if role == "heavyweight") < int(quotas["heavyweight_target"]):
         missing.append("重量级内容")
+    if sum(1 for role, _ in selected if role == "serendipity") < int(quotas.get("serendipity_min", 1)):
+        missing.append("其他领域")
     if missing:
         lines.extend([
             "## 今日缺口",
@@ -618,10 +648,10 @@ def render_site_archive_page(
 ) -> str:
     """Render one immutable, dated web edition from committed database records."""
     role_names = {
-        "core": "主要相关",
-        "adjacent": "次要相关",
-        "heavyweight": "重要文献",
-        "serendipity": "随机看一篇",
+        "core": "核心兴趣",
+        "adjacent": "邻近领域",
+        "heavyweight": "重量级内容",
+        "serendipity": "其他领域",
     }
     role_labels = {
         "core": "PRIMARY SIGNAL",
@@ -689,9 +719,9 @@ def render_site_archive_page(
     sections: list[str] = []
     for section_index, role in enumerate(("core", "adjacent", "heavyweight", "serendipity"), start=1):
         group = [(index, row) for index, (selected_role, row) in enumerate(selected, start=1) if selected_role == role]
-        if not group:
-            continue
         cards = []
+        if not group:
+            cards.append('<p class="dek">本期缺项：尚无满足全文、质量及主题多样性要求的已审阅候选。</p>')
         for index, row in group:
             card = paper_card(index, role, row).replace('<article class="paper">', f'<article class="paper" id="paper-{row["id"]}">', 1)
             cards.append(card)
