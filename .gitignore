@@ -5,4 +5,5 @@ data/*.sqlite
 data/*.sqlite-*
 briefs/*.md
 !briefs/.gitkeep
+data/reading-records/
 

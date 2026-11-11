@@ -1,0 +1,4 @@
+interface:
+  display_name: "Personal Paper Reading"
+  short_description: "Conservatively learn evidence-backed reading preferences"
+  default_prompt: "Use $personal-paper-reading to examine supplied co-reading records and update only well-supported reading preferences."

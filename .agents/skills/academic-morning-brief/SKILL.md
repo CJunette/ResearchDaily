@@ -7,6 +7,8 @@ description: Prepare a personalized, full-text-verified academic morning brief w
 
 Produce a trustworthy reading brief, not a list of search results. Use `scripts/research_daily.py` at the project root for state, deduplication, validation, and rendering.
 
+Before writing, read the project skill `../personal-paper-reading/SKILL.md` and run `python3 scripts/reading_preferences.py profile`. Apply only established preferences within their stated scope; candidate observations from reading transcripts must not influence the brief. Keep direct current feedback distinct from inferred long-term traits. Record applied preference IDs in the daily run log. Missing/empty personal history means no learned style adjustment.
+
 ## Non-negotiable rules
 
 - Read every selected paper in full. Abstracts, snippets, press coverage, and another model's summary do not count.

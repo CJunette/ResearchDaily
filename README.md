@@ -67,7 +67,22 @@ node sites/research-daily/scripts/preview-worker.mjs 4173
 
 正式数据库迁移以 `sites/research-daily/drizzle/` 的 SQL 和 `meta/_journal.json` 为准。Sites 打包工具将它们放入 `dist/.openai/drizzle/` 后应用；旧的 `migrations/` 文件仅保留作历史参考，不能替代该发布路径。
 
-## 测试
+## 阅读偏好学习
+
+项目 skill `.agents/skills/personal-paper-reading/` 用于从用户主动提供的共同阅读记录中学习。原始对话、候选解释和生效偏好分开保存在本地 `data/reading-preferences.sqlite`；原始导出文件可放在被 Git 忽略的 `data/reading-records/`。代码会同步到 GitHub，阅读记录及归纳结果不自动公开。
+
+学习从空档案开始。大模型自己的回答风格、用户的一次追问或没有反对，都不能当成稳定偏好。推断偏好至少需要四篇不同论文、三个主题、三个阅读日期的支持，再由后来第五篇不同论文验证，并审阅替代解释和反例；达到计数也不会自动生效。这些门槛是保守的工程规则，不代表统计置信度。出现反证会暂停已生效偏好。具体格式和工作流见 skill 的 `references/record-format.md` 和 `references/learning-policy.md`。
+
+```bash
+python3 scripts/reading_preferences.py ingest /path/to/reading-record.json
+python3 scripts/reading_preferences.py observe /path/to/preference-hypothesis.json
+python3 scripts/reading_preferences.py inspect
+python3 scripts/reading_preferences.py profile
+```
+
+每日早报读取 `profile` 返回的生效偏好，候选解释不参与个性化。记录可逐次提供，无需凑够数量；当前没有凭历史示例预填任何个人风格。
+
+## 运行测试
 
 ```bash
 python3 -m unittest discover -s tests -q
