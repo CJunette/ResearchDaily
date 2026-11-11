@@ -1,5 +1,5 @@
 const ASSETS = __RESEARCH_DAILY_ASSETS__;
-const SIGNALS = new Set(['interested', 'more', 'less', 'question', 'ai_question']);
+const SIGNALS = new Set(['freeform', 'interested', 'more', 'less', 'question', 'ai_question']);
 const SOURCES = new Set(['site', 'gemini', 'other']);
 
 function json(data, status = 200) {
@@ -23,10 +23,10 @@ async function saveFeedback(request, env) {
   const title = String(body.title || '').trim().slice(0, 1000);
   const briefDate = String(body.briefDate || '').trim().slice(0, 32);
   const signal = String(body.signal || '').trim();
-  const note = String(body.note || '').trim().slice(0, 4000);
+  const note = String(body.note || '').trim();
   const source = String(body.source || 'site').trim();
   if (!paperId || !SIGNALS.has(signal) || !SOURCES.has(source)) return json({error:'反馈类型或论文标识无效。'}, 400);
-  if ((signal === 'question' || source === 'gemini') && !note) return json({error:'问题反馈或 Gemini 片段不能为空。'}, 400);
+  if (!note) return json({error:'反馈内容不能为空。'}, 400);
   const result = await env.DB.prepare('INSERT INTO feedback (user_id,paper_id,paper_title,brief_date,signal,note,source) VALUES (?,?,?,?,?,?,?)')
     .bind(user,paperId,title,briefDate,signal,note,source).run();
   return json({saved:true,id:result.meta?.last_row_id ?? null}, 201);
@@ -53,8 +53,8 @@ async function handleMcp(request, env) {
   const reply = (result) => json({jsonrpc:'2.0',id:rpc.id ?? null,result});
   if (rpc.method === 'server/discover') return reply({supportedVersions:['2026-07-28'],capabilities:{tools:{}}});
   if (rpc.method === 'tools/list') return reply({tools:[
-    {name:'list_research_feedback',description:'Read the signed-in owner’s Research Daily feedback so future paper selection and summaries can adapt to their interests.',inputSchema:{type:'object',properties:{paper_id:{type:'string'},limit:{type:'integer',minimum:1,maximum:500}},additionalProperties:false}},
-    {name:'record_external_questions',description:'Save only question excerpts the user explicitly chose to import from Gemini or another reading assistant. Never import an entire private conversation unless the user explicitly requests it.',inputSchema:{type:'object',required:['paper_id','questions'],properties:{paper_id:{type:'string'},paper_title:{type:'string'},brief_date:{type:'string'},questions:{type:'string',maxLength:4000},source:{type:'string',enum:['gemini','other']}},additionalProperties:false}}
+    {name:'list_research_feedback',description:'Read the signed-in owner’s open-ended Research Daily feedback. Interpret and summarize the text only after reading it; do not assume a category from the stored signal.',inputSchema:{type:'object',properties:{paper_id:{type:'string'},limit:{type:'integer',minimum:1,maximum:500}},additionalProperties:false}},
+    {name:'record_external_questions',description:'Save question excerpts the user explicitly chose to import from Gemini or another reading assistant as open-ended feedback.',inputSchema:{type:'object',required:['paper_id','questions'],properties:{paper_id:{type:'string'},paper_title:{type:'string'},brief_date:{type:'string'},questions:{type:'string'},source:{type:'string',enum:['gemini','other']}},additionalProperties:false}}
   ]});
   if (rpc.method !== 'tools/call') return json({jsonrpc:'2.0',id:rpc.id ?? null,error:{code:-32601,message:'Method not found'}}, 404);
   const name = rpc.params?.name;

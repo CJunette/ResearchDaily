@@ -1,10 +1,3 @@
-const FEEDBACK_SIGNALS = [
-  ['interested', '★ 更关注'],
-  ['more', '＋ 多来这类'],
-  ['less', '− 少来这类'],
-  ['question', '? 有问题'],
-];
-
 function feedbackPaperId(article) {
   const reviewId = article.querySelector('details[data-review]')?.dataset.review;
   if (reviewId) return reviewId;
@@ -27,39 +20,25 @@ document.querySelectorAll('article.paper').forEach((article) => {
   panel.dataset.paperId = paperId;
   panel.innerHTML = `
     <div class="feedback-heading">
-      <div><span>YOUR SIGNAL</span><h4>这篇文章给你的反馈</h4></div>
-      <p>只保存你主动提交的内容，用于调整后续选题与精读重点。</p>
-    </div>
-    <div class="feedback-signals" role="group" aria-label="反馈类型">
-      ${FEEDBACK_SIGNALS.map(([value, label]) => `<button type="button" data-signal="${value}">${label}</button>`).join('')}
+      <div><span>YOUR NOTES</span><h4>告诉我你的想法</h4></div>
+      <p>问题、判断、偏好、反对意见或想继续追的方向都可以直接写。我会在后续早报中归纳，不需要你先分类。</p>
     </div>
     <label class="feedback-note">
-      <span>你真正关注的问题</span>
-      <textarea rows="3" maxlength="4000" placeholder="例如：我更关心它如何处理跨用户泛化；也可以粘贴你在 Gemini 中针对这篇论文提出的问题片段。"></textarea>
+      <span>反馈内容</span>
+      <textarea rows="5" placeholder="随便写：哪里有意思、哪里不可信、希望多看或少看什么、想让我下次重点解释什么，也可以粘贴你在其他阅读工具中的相关笔记。"></textarea>
     </label>
     <div class="feedback-actions">
-      <label><span>内容来源</span><select><option value="site">网页反馈</option><option value="gemini">Gemini 提问片段</option><option value="other">其他笔记</option></select></label>
       <button class="feedback-submit" type="button">保存反馈 →</button>
       <p class="feedback-status" role="status" aria-live="polite"></p>
     </div>`;
   main.append(panel);
 
-  let selectedSignal = 'interested';
-  const buttons = panel.querySelectorAll('[data-signal]');
-  buttons[0].classList.add('selected');
-  buttons.forEach((button) => button.addEventListener('click', () => {
-    buttons.forEach((candidate) => candidate.classList.remove('selected'));
-    button.classList.add('selected');
-    selectedSignal = button.dataset.signal;
-  }));
-
   panel.querySelector('.feedback-submit').addEventListener('click', async () => {
     const submit = panel.querySelector('.feedback-submit');
     const status = panel.querySelector('.feedback-status');
     const note = panel.querySelector('textarea').value.trim();
-    const source = panel.querySelector('select').value;
-    if ((selectedSignal === 'question' || source === 'gemini') && !note) {
-      status.textContent = '请先写下问题或粘贴提问片段。';
+    if (!note) {
+      status.textContent = '请先写下反馈。';
       return;
     }
     submit.disabled = true;
@@ -68,7 +47,7 @@ document.querySelectorAll('article.paper').forEach((article) => {
       const response = await fetch('/api/feedback', {
         method: 'POST',
         headers: {'content-type': 'application/json'},
-        body: JSON.stringify({paperId, title, briefDate: feedbackBriefDate(), signal: selectedSignal, note, source}),
+        body: JSON.stringify({paperId, title, briefDate: feedbackBriefDate(), signal: 'freeform', note, source: 'site'}),
       });
       if (!response.headers.get('content-type')?.includes('application/json')) {
         throw new Error('服务返回异常页面，请刷新登录状态后重试；输入内容已保留。');
@@ -76,7 +55,7 @@ document.querySelectorAll('article.paper').forEach((article) => {
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || '保存失败');
       panel.querySelector('textarea').value = '';
-      status.textContent = '已保存。下一期选题会读取这条信号。';
+      status.textContent = '已保存。我会在后续早报中归纳这条反馈。';
     } catch (error) {
       status.textContent = `未保存：${error.message}`;
     } finally {
