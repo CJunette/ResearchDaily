@@ -667,6 +667,9 @@ def render_site_archive_page(
     }
     total_minutes = sum(int(row["reading_minutes"]) for _, row in selected)
     top = sorted(selected, key=lambda pair: candidate_score(pair[1], interests), reverse=True)[:2]
+    quotas = interests["quotas"]
+    minimums = {"core": int(quotas["core_min"]), "adjacent": int(quotas["adjacent_min"]), "heavyweight": int(quotas["heavyweight_target"]), "serendipity": int(quotas.get("serendipity_min", 1))}
+    maximums = {"core": int(quotas["core_max"]), "adjacent": int(quotas["adjacent_max"]), "heavyweight": int(quotas.get("heavyweight_max", 2)), "serendipity": int(quotas["serendipity_max"])}
 
     def esc(value: Any) -> str:
         return html.escape(str(value or ""), quote=True)
@@ -726,7 +729,7 @@ def render_site_archive_page(
             card = paper_card(index, role, row).replace('<article class="paper">', f'<article class="paper" id="paper-{row["id"]}">', 1)
             cards.append(card)
         sections.append(
-            f'<section class="paper-section {role_classes[role]}" id="{role}"><header class="section-head"><div><span class="section-no">{section_index:02d}</span><p>{role_labels[role]}</p></div><h2>{role_names[role]}</h2><p>本期内容已阅读全文并永久归档。</p></header>{"".join(cards)}</section>'
+            f'<section class="paper-section {role_classes[role]}" id="{role}"><header class="section-head"><div><span class="section-no">{section_index:02d}</span><p>{role_labels[role]}</p></div><h2>{role_names[role]}</h2><p>已收录 {len(group)} 篇 / 目标 {minimums[role]}–{maximums[role]} 篇。' + (f'距最低配额仍缺 {minimums[role] - len(group)} 篇。' if len(group) < minimums[role] else '本栏最低配额已满足。') + f'</p></header>{"".join(cards)}</section>'
         )
 
     return f"""<!doctype html>
