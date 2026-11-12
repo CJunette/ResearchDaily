@@ -31,8 +31,10 @@ Required object:
   "quality_score": 8.0,
   "relevance_score": 9.0,
   "innovation_score": 8.0,
-  "reviewer_notes": "可选的内部核验备注"
+  "reviewer_notes": "topic: specific_topic\ndomain: broad_domain（重量级内容必填）\n其他内部核验备注"
 }
 ```
 
 `full_text_read` 必须是真正的 JSON boolean `true`。若只读到摘要，不要创建审阅记录。分数范围为 0–10；阅读时间范围为 2–20 分钟。
+
+所有新审阅都写 `topic:`。重量级候选另写 `domain:`，优先使用 `ai_robotics`、`hci_ubicomp_health`、`life_sciences`、`physical_sciences`、`environment`、`social_sciences`。领域描述研究对象和方法所在的宽领域，不由出版社或期刊名决定。

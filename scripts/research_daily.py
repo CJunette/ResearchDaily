@@ -519,6 +519,38 @@ def topic_family(row: sqlite3.Row) -> str:
     return "paper:" + row["id"]
 
 
+def heavyweight_domain(row: sqlite3.Row) -> str:
+    """Return a broad editorial domain for heavyweight diversity."""
+    notes = row["reviewer_notes"] or ""
+    explicit = re.search(r"(?:^|\n)domain:\s*([a-z0-9_-]+)", notes, re.I)
+    if explicit:
+        return explicit.group(1).lower()
+    text = " ".join(
+        str(row[key] or "")
+        for key in ("title", "problem", "method", "why_read", "reviewer_notes")
+    ).lower()
+    topic = topic_family(row)
+    haystack = f"{topic} {text}"
+    domain_terms = {
+        "ai_robotics": (
+            "artificial intelligence", "machine learning", "deep learning", "neural", "llm",
+            "language model", "computer vision", "robot", "embodied", "foundation model",
+        ),
+        "hci_ubicomp_health": (
+            "human-computer", "hci", "interaction", "ubicomp", "ubiquitous", "sensing",
+            "wearable", "accessib", "health", "clinical", "medicine", "patient", "behaviour",
+        ),
+        "life_sciences": ("biology", "genome", "gene", "cell", "ecology", "species", "biodiversity"),
+        "physical_sciences": ("physics", "quantum", "material", "chemistry", "photon", "crystal"),
+        "environment": ("climate", "environment", "earth", "ocean", "emission"),
+        "social_sciences": ("society", "social science", "econom", "policy", "education"),
+    }
+    for domain, terms in domain_terms.items():
+        if any(term in haystack for term in terms):
+            return domain
+    return "other"
+
+
 def select_rows(rows: list[sqlite3.Row], interests: dict[str, Any]) -> list[tuple[str, sqlite3.Row]]:
     pools: dict[str, list[sqlite3.Row]] = {role: [] for role in BRIEF_ROLES}
     for row in rows:
@@ -534,28 +566,64 @@ def select_rows(rows: list[sqlite3.Row], interests: dict[str, Any]) -> list[tupl
     enforce_time_budget = bool(brief.get("enforce_max_minutes", False))
     diversity = interests.get("diversity", {})
 
-    def take(role: str, count: int) -> None:
+    def can_take(role: str, row: sqlite3.Row) -> bool:
+        minutes = int(row["reading_minutes"])
+        topic = topic_family(row)
+        if sum(topic_family(item) == topic for _, item in selected) >= int(diversity.get("max_same_topic_per_brief", 2)):
+            return False
+        if sum(r == role and topic_family(item) == topic for r, item in selected) >= int(diversity.get("max_same_topic_per_section", 1)):
+            return False
+        if len(selected) >= int(brief["max_items"]):
+            return False
+        if enforce_time_budget and used_minutes + minutes > int(brief["max_minutes"]):
+            return False
+        return True
+
+    def append_row(role: str, row: sqlite3.Row) -> None:
         nonlocal used_minutes
+        pools[role].remove(row)
+        selected.append((role, row))
+        used_minutes += int(row["reading_minutes"])
+
+    def take(role: str, count: int) -> None:
         while count > 0 and pools.get(role):
             row = pools[role][0]
-            minutes = int(row["reading_minutes"])
-            topic = topic_family(row)
-            if (sum(topic_family(item) == topic for _, item in selected) >= int(diversity.get("max_same_topic_per_brief", 2))
-                or sum(r == role and topic_family(item) == topic for r, item in selected) >= int(diversity.get("max_same_topic_per_section", 1))):
+            if not can_take(role, row):
                 pools[role].pop(0)
                 continue
-            if len(selected) >= int(brief["max_items"]):
-                return
-            if enforce_time_budget and used_minutes + minutes > int(brief["max_minutes"]):
-                pools[role].pop(0)
-                continue
-            selected.append((role, pools[role].pop(0)))
-            used_minutes += minutes
+            append_row(role, row)
             count -= 1
+
+    def take_heavyweight_diverse(count: int) -> None:
+        if count <= 0:
+            return
+        eligible = [row for row in pools["heavyweight"] if can_take("heavyweight", row)]
+        if not eligible:
+            return
+        chosen: list[sqlite3.Row] = []
+        preferred = list(diversity.get("heavyweight_preferred_domains", ["ai_robotics", "hci_ubicomp_health"]))
+        if count >= 2 and all(any(heavyweight_domain(row) == domain for row in eligible) for domain in preferred[:2]):
+            for domain in preferred[:2]:
+                chosen.append(next(row for row in eligible if heavyweight_domain(row) == domain))
+        else:
+            chosen.append(eligible[0])
+            if count >= 2 and diversity.get("heavyweight_prefer_distinct_domains", True):
+                first_domain = heavyweight_domain(chosen[0])
+                different = next((row for row in eligible[1:] if heavyweight_domain(row) != first_domain), None)
+                if different is not None:
+                    chosen.append(different)
+        for row in eligible:
+            if len(chosen) >= count:
+                break
+            if row not in chosen:
+                chosen.append(row)
+        for row in chosen:
+            if can_take("heavyweight", row):
+                append_row("heavyweight", row)
 
     take("core", int(quotas["core_min"]))
     take("adjacent", int(quotas["adjacent_min"]))
-    take("heavyweight", int(quotas["heavyweight_target"]))
+    take_heavyweight_diverse(int(quotas["heavyweight_target"]))
     take("serendipity", int(quotas.get("serendipity_min", 1)))
     take("ai_frontier", int(quotas.get("ai_frontier_max", 0)))
 

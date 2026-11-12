@@ -22,6 +22,8 @@
   "diversity": {
     "max_same_topic_per_section": 1,
     "max_same_topic_per_brief": 2,
+    "heavyweight_preferred_domains": ["ai_robotics", "hci_ubicomp_health"],
+    "heavyweight_prefer_distinct_domains": true,
     "candidate_lookback_fallback_days": 180,
     "generation_target_minutes": 45
   },

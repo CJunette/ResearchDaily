@@ -121,6 +121,30 @@ class ResearchDailyTests(unittest.TestCase):
         self.assertEqual([r for r, _ in selected], ["core", "core", "core", "adjacent", "adjacent", "heavyweight", "heavyweight", "serendipity"])
         self.assertEqual(len({MODULE.topic_family(row) for _, row in selected}), 8)
 
+    def test_heavyweight_minimum_prefers_ai_and_human_domain_pair(self):
+        candidates = [
+            ("AI Systems", "ai_one", "ai_robotics", 10.0),
+            ("Robot Learning", "ai_two", "ai_robotics", 9.5),
+            ("Digital Health Interaction", "health_one", "hci_ubicomp_health", 8.0),
+        ]
+        for i, (title, topic, domain, relevance) in enumerate(candidates):
+            pid = MODULE.upsert_candidate(
+                self.conn,
+                self.candidate(title=title, doi=f"10.1000/heavy{i}", track="broad_impact"),
+                self.sources,
+            )
+            review = self.review(pid)
+            review.update(relevance_score=relevance, reviewer_notes=f"topic: {topic}\ndomain: {domain}")
+            MODULE.save_review(self.conn, review)
+        selected = MODULE.select_rows(MODULE.eligible_rows(self.conn, self.interests), self.interests)
+        heavyweight = [row for role, row in selected if role == "heavyweight"]
+        self.assertGreaterEqual(len(heavyweight), 2)
+        self.assertEqual(
+            {MODULE.heavyweight_domain(row) for row in heavyweight[:2]},
+            {"ai_robotics", "hci_ubicomp_health"},
+        )
+        self.assertNotIn("Robot Learning", {row["title"] for row in heavyweight[:2]})
+
     def test_empty_sections_remain_visible(self):
         page = MODULE.render_site_archive_page([], "2026-11-11", self.interests)
         for role in MODULE.BRIEF_ROLES:
