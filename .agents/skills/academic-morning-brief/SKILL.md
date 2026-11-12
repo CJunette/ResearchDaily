@@ -24,6 +24,11 @@ Read [references/editorial-policy.md](references/editorial-policy.md) before rev
 
 ## Workflow
 
+### Automation run identity
+
+- When this skill is invoked by the standalone daily automation, determine the current calendar date in `Europe/London` before doing other work and rename the current Codex thread to `每日学术早报 · YYYY-MM-DD` using that date. This is the run label, not the paper publication date.
+- Rename only the current automation-created thread. Do not rename manual project conversations or previous run threads, and do not treat a title-renaming failure as a reason to stop or duplicate the brief.
+
 ### Daily balance and runtime
 
 - Always show five sections: 核心兴趣 (3–4, prioritize CHI/UIST/IMWUT/CSCW and related conferences), 邻近领域 (2–3), 重量级内容 (2–3, prioritize Nature/Science), 其他领域 (1–2, conference or journal), AI 新动向 (0–1, early AI ideas/applications). Reserve the increased original minimums 3+2+2+1, then consider AI 新动向 before other extras. The 30-minute figure is an approximate reader-facing estimate, not a hard selection cutoff; use it to report workload, and continue reviewing eligible papers when the edition runs longer. AI 新动向 requires full-text review and the same quality threshold, with explicit unreviewed status and actual manuscript version; follow the discovery skill's AI-frontier reference. Empty optional frontier does not make the original quotas incomplete.

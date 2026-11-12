@@ -48,6 +48,12 @@ python3 scripts/research_daily.py export-site --date 2026-11-10
 
 `export-site` 会创建 `sites/research-daily/site/archive/YYYY-MM-DD/index.html` 并刷新历史归档首页。已有日期默认视为不可变版本；只有显式使用 `--replace` 才会重建。
 
+## 定时运行与对话命名
+
+每日 07:30 的 Codex 自动任务采用独立会话运行。每次运行开始时，系统按 `Europe/London` 的当天日期把当前运行对话命名为 `每日学术早报 · YYYY-MM-DD`，例如 `每日学术早报 · 2026-11-13`。日期表示这一次早报任务的运行日，不是论文发表日期。
+
+这项命名只作用于自动任务新建的当前对话；不会改名手动项目对话或以前的运行记录。改名失败也不会中断早报生成，更不会因此重复生成或覆盖当天版本。
+
 ## 可替换的文献发现模块
 
 早报 skill 通过 `config/discovery.json` 的 `skill` 路径调用独立的 `literature-discovery` skill。以后替换该路径并遵守新 skill 的候选/标注接口，即可更换发现方法，全文评估、配额与网页生成继续使用既有流程。
