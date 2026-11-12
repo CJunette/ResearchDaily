@@ -152,12 +152,12 @@ class ResearchDailyTests(unittest.TestCase):
         for i, track in enumerate(tracks):
             pid = MODULE.upsert_candidate(self.conn, self.candidate(title=f"Item {i}", doi=f"10.1000/order{i}", track=track), self.sources)
             review = self.review(pid)
-            review.update(reading_minutes=3, relevance_score=10-i/10,
+            review.update(reading_minutes=5, relevance_score=10-i/10,
                           reviewer_notes=f"topic: topic_{i}\npeer_review_status: unreviewed\nversion: v1")
             MODULE.save_review(self.conn, review)
         selected = MODULE.select_rows(MODULE.eligible_rows(self.conn, self.interests), self.interests)
         self.assertEqual([role for role, _ in selected][:9], ["core","core","core","adjacent","adjacent","heavyweight","heavyweight","serendipity","ai_frontier"])
-        self.assertLessEqual(sum(row["reading_minutes"] for _, row in selected), 35)
+        self.assertGreater(sum(row["reading_minutes"] for _, row in selected), 35)
         self.assertEqual(sum(role == "ai_frontier" for role, _ in selected), 1)
 
     def test_abstract_only_review_is_rejected(self):

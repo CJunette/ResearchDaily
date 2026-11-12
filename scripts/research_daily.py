@@ -531,6 +531,7 @@ def select_rows(rows: list[sqlite3.Row], interests: dict[str, Any]) -> list[tupl
     quotas = interests["quotas"]
     selected: list[tuple[str, sqlite3.Row]] = []
     used_minutes = 0
+    enforce_time_budget = bool(brief.get("enforce_max_minutes", False))
     diversity = interests.get("diversity", {})
 
     def take(role: str, count: int) -> None:
@@ -545,7 +546,7 @@ def select_rows(rows: list[sqlite3.Row], interests: dict[str, Any]) -> list[tupl
                 continue
             if len(selected) >= int(brief["max_items"]):
                 return
-            if used_minutes + minutes > int(brief["max_minutes"]):
+            if enforce_time_budget and used_minutes + minutes > int(brief["max_minutes"]):
                 pools[role].pop(0)
                 continue
             selected.append((role, pools[role].pop(0)))

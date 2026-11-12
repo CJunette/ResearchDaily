@@ -3,9 +3,10 @@
     "timezone": "Europe/London",
     "target_minutes": 30,
     "max_minutes": 35,
-    "max_items": 9,
+    "max_items": 13,
     "lookback_days": 45,
-    "min_quality_score": 7.0
+    "min_quality_score": 7.0,
+    "enforce_max_minutes": false
   },
   "quotas": {
     "core_min": 3,
