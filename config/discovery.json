@@ -1,0 +1,10 @@
+{
+  "skill": ".agents/skills/literature-discovery/SKILL.md",
+  "strategy": "catalog_first",
+  "initial_screen_batch": 24,
+  "exploration_fraction": 0.25,
+  "recent_days": 45,
+  "fallback_days": 180,
+  "conference_edition_policy": "latest_available_then_recent_previous_edition",
+  "legacy_keyword_collection_enabled": false
+}

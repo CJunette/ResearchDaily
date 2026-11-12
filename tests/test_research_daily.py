@@ -72,25 +72,93 @@ class ResearchDailyTests(unittest.TestCase):
         self.assertEqual(first, second)
         self.assertEqual(self.conn.execute("SELECT COUNT(*) FROM papers").fetchone()[0], 1)
 
+    def test_discovery_resumes_source_without_duplicate_annotations(self):
+        pid = MODULE.upsert_candidate(self.conn, self.candidate(), self.sources)
+        payload = {"sources": [{"source_key": "chi:2026", "url": "https://example.org/list",
+                                "cursor": "page2", "complete": False}],
+                   "decisions": [{"paper_id": pid, "source_key": "chi:2026", "topic": "interaction",
+                                  "status": "defer", "reason": "Check later", "retry_after": "2026-11-20"}]}
+        MODULE.save_discovery(self.conn, payload)
+        MODULE.save_discovery(self.conn, payload)
+        self.assertEqual(self.conn.execute("SELECT COUNT(*) FROM discovery_decisions").fetchone()[0], 1)
+        self.assertEqual(self.conn.execute("SELECT cursor FROM discovery_sources").fetchone()[0], "page2")
+        payload["sources"][0].update(cursor="", complete=True)
+        payload["decisions"][0].update(status="shortlist", reason="Read next", retry_after=None)
+        MODULE.save_discovery(self.conn, payload)
+        self.assertEqual(self.conn.execute("SELECT complete FROM discovery_sources").fetchone()[0], 1)
+        self.assertEqual(self.conn.execute("SELECT status FROM discovery_decisions").fetchone()[0], "shortlist")
+        # Initial screening must never make an article eligible without a full-text review.
+        self.assertEqual(MODULE.eligible_rows(self.conn, self.interests), [])
+
+    def test_discovery_invalid_batch_rolls_back(self):
+        self.conn.commit()
+        with self.assertRaises(ValueError):
+            with self.conn:
+                MODULE.save_discovery(self.conn, {
+                    "sources": [{"source_key": "new", "url": "https://example.org", "complete": False}],
+                    "decisions": [{"paper_id": "unknown"}],
+                })
+        self.assertEqual(self.conn.execute("SELECT COUNT(*) FROM discovery_sources").fetchone()[0], 0)
+
+    def test_default_keyword_collector_stops_before_network_access(self):
+        with self.assertRaisesRegex(ValueError, "catalog-first"):
+            MODULE.command_collect(SimpleNamespace(allow_keyword_fallback=False))
+
     def test_minimum_sections_reserved_before_extras_and_topics_diverse(self):
         for i, (track, topic) in enumerate([
             ("hci_ubicomp_sensing", "rf"), ("hci_ubicomp_sensing", "rf"),
-            ("hci_ubicomp_sensing", "interaction"),
-            ("digital_health", "clinical"), ("broad_impact", "physics"),
+            ("hci_ubicomp_sensing", "interaction"), ("hci_ubicomp_sensing", "accessibility"),
+            ("digital_health", "clinical"), ("digital_health", "health_ai"),
+            ("broad_impact", "physics"), ("broad_impact", "biology"),
             ("serendipity", "ecology"),
         ]):
             pid = MODULE.upsert_candidate(self.conn, self.candidate(title=f"Paper {i}", doi=f"10.1000/{i}", track=track), self.sources)
             review = self.review(pid)
             review["reviewer_notes"] = f"topic: {topic}"
+            review["reading_minutes"] = 3
             MODULE.save_review(self.conn, review)
         selected = MODULE.select_rows(MODULE.eligible_rows(self.conn, self.interests), self.interests)
-        self.assertEqual([r for r, _ in selected], ["core", "core", "adjacent", "heavyweight", "serendipity"])
-        self.assertEqual(len({MODULE.topic_family(row) for _, row in selected}), 5)
+        self.assertEqual([r for r, _ in selected], ["core", "core", "core", "adjacent", "adjacent", "heavyweight", "heavyweight", "serendipity"])
+        self.assertEqual(len({MODULE.topic_family(row) for _, row in selected}), 8)
 
     def test_empty_sections_remain_visible(self):
         page = MODULE.render_site_archive_page([], "2026-11-11", self.interests)
-        for role in ("core", "adjacent", "heavyweight", "serendipity"):
+        for role in MODULE.BRIEF_ROLES:
             self.assertIn(f'id="{role}"', page)
+
+    def test_frontier_requires_status_and_version_and_remains_full_text_gated(self):
+        pid = MODULE.upsert_candidate(self.conn, self.candidate(track="ai_frontier"), self.sources)
+        review = self.review(pid)
+        with self.assertRaisesRegex(ValueError, "peer_review_status"):
+            MODULE.save_review(self.conn, review)
+        review["reviewer_notes"] = "topic: agent_workflow\npeer_review_status: unreviewed\nversion: v2, 2026-11-10"
+        review["full_text_read"] = False
+        with self.assertRaisesRegex(ValueError, "abstract-only"):
+            MODULE.save_review(self.conn, review)
+        review["full_text_read"] = True
+        MODULE.save_review(self.conn, review)
+        selected = MODULE.select_rows(MODULE.eligible_rows(self.conn, self.interests), self.interests)
+        self.assertEqual([role for role, _ in selected], ["ai_frontier"])
+        page = MODULE.render_site_archive_page(selected, "2026-11-12", self.interests)
+        markdown = MODULE.render_brief(selected, "2026-11-12", self.interests)
+        for output in (page, markdown):
+            self.assertIn("尚未经同行评审", output)
+            self.assertIn("v2, 2026-11-10", output)
+
+    def test_frontier_after_original_minimums_and_within_time_budget(self):
+        tracks = ["hci_ubicomp_sensing", "hci_ubicomp_sensing", "digital_health",
+                  "robotics_hri", "broad_impact", "broad_impact", "serendipity",
+                  "ai_frontier", "hci_ubicomp_sensing"]
+        for i, track in enumerate(tracks):
+            pid = MODULE.upsert_candidate(self.conn, self.candidate(title=f"Item {i}", doi=f"10.1000/order{i}", track=track), self.sources)
+            review = self.review(pid)
+            review.update(reading_minutes=3, relevance_score=10-i/10,
+                          reviewer_notes=f"topic: topic_{i}\npeer_review_status: unreviewed\nversion: v1")
+            MODULE.save_review(self.conn, review)
+        selected = MODULE.select_rows(MODULE.eligible_rows(self.conn, self.interests), self.interests)
+        self.assertEqual([role for role, _ in selected][:9], ["core","core","core","adjacent","adjacent","heavyweight","heavyweight","serendipity","ai_frontier"])
+        self.assertLessEqual(sum(row["reading_minutes"] for _, row in selected), 35)
+        self.assertEqual(sum(role == "ai_frontier" for role, _ in selected), 1)
 
     def test_abstract_only_review_is_rejected(self):
         paper_id = MODULE.upsert_candidate(self.conn, self.candidate(), self.sources)

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Literature Discovery"
+  short_description: "Screen paper catalogs with persistent, diverse discovery"
+  default_prompt: "Use $literature-discovery to collect diverse paper candidates from official catalogs and resume saved screening progress."

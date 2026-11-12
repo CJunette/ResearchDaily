@@ -26,7 +26,9 @@ ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_DB = ROOT / "data" / "papers.sqlite"
 INTERESTS_PATH = ROOT / "config" / "interests.json"
 SOURCES_PATH = ROOT / "config" / "sources.json"
+DISCOVERY_PATH = ROOT / "config" / "discovery.json"
 SITE_DIST = ROOT / "sites" / "research-daily" / "site"
+BRIEF_ROLES = ("core", "adjacent", "heavyweight", "serendipity", "ai_frontier")
 
 
 SCHEMA = """
@@ -90,6 +92,24 @@ CREATE TABLE IF NOT EXISTS feedback (
     value TEXT NOT NULL,
     note TEXT NOT NULL DEFAULT '',
     created_at TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS discovery_sources (
+    source_key TEXT PRIMARY KEY,
+    url TEXT NOT NULL,
+    cursor TEXT NOT NULL,
+    complete INTEGER NOT NULL CHECK(complete IN (0, 1)),
+    notes TEXT NOT NULL,
+    checked_at TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS discovery_decisions (
+    paper_id TEXT NOT NULL REFERENCES papers(id),
+    source_key TEXT NOT NULL REFERENCES discovery_sources(source_key),
+    topic TEXT NOT NULL,
+    status TEXT NOT NULL CHECK(status IN ('shortlist', 'defer', 'reject', 'access_blocked')),
+    reason TEXT NOT NULL,
+    retry_after TEXT,
+    updated_at TEXT NOT NULL,
+    PRIMARY KEY(paper_id, source_key)
 );
 """
 
@@ -166,6 +186,9 @@ def paper_id_from_key(key: str) -> str:
 
 def venue_score(venue: str, config: dict[str, Any]) -> float:
     venue_lower = venue.lower()
+    for journal in config.get("journal_catalogs", []):
+        if journal["name"].lower() == venue_lower:
+            return 9.0 if journal.get("rotation") == "primary" else 7.0
     for candidate in config.get("venues", {}).get("high_priority", []):
         if candidate.lower() in venue_lower:
             return 9.0
@@ -366,8 +389,13 @@ def validate_review(review: dict[str, Any]) -> None:
 
 def save_review(conn: sqlite3.Connection, review: dict[str, Any]) -> None:
     validate_review(review)
-    if conn.execute("SELECT 1 FROM papers WHERE id = ?", (review["paper_id"],)).fetchone() is None:
+    paper = conn.execute("SELECT track FROM papers WHERE id = ?", (review["paper_id"],)).fetchone()
+    if paper is None:
         raise ValueError(f"unknown paper_id: {review['paper_id']}")
+    if paper["track"] == "ai_frontier":
+        notes = str(review.get("reviewer_notes") or "")
+        if not re.search(r"(?m)^peer_review_status:\s*unreviewed\s*$", notes) or not re.search(r"(?m)^version:\s*\S[^\n]*$", notes):
+            raise ValueError("AI frontier review requires peer_review_status: unreviewed and version: in reviewer_notes")
     conn.execute(
         """
         INSERT INTO reviews (
@@ -492,7 +520,7 @@ def topic_family(row: sqlite3.Row) -> str:
 
 
 def select_rows(rows: list[sqlite3.Row], interests: dict[str, Any]) -> list[tuple[str, sqlite3.Row]]:
-    pools: dict[str, list[sqlite3.Row]] = {role: [] for role in ("core", "adjacent", "heavyweight", "serendipity")}
+    pools: dict[str, list[sqlite3.Row]] = {role: [] for role in BRIEF_ROLES}
     for row in rows:
         role = track_role(row["track"], interests)
         pools.setdefault(role, []).append(row)
@@ -528,6 +556,7 @@ def select_rows(rows: list[sqlite3.Row], interests: dict[str, Any]) -> list[tupl
     take("adjacent", int(quotas["adjacent_min"]))
     take("heavyweight", int(quotas["heavyweight_target"]))
     take("serendipity", int(quotas.get("serendipity_min", 1)))
+    take("ai_frontier", int(quotas.get("ai_frontier_max", 0)))
 
     core_extra = max(0, int(quotas["core_max"]) - sum(1 for role, _ in selected if role == "core"))
     adjacent_extra = max(0, int(quotas["adjacent_max"]) - sum(1 for role, _ in selected if role == "adjacent"))
@@ -561,6 +590,10 @@ def format_paper(index: int, role: str, row: sqlite3.Row) -> str:
     if row["citations"] is not None:
         metric = f"{row['citation_source'] or '来源未注明'} 引用数 {row['citations']}（查询于 {row['citation_checked_at'] or '日期未记录'}）"
     peer_status = "预印本/未确认同行评审" if (row["work_type"] or "").lower() in {"preprint", "posted-content"} else "正式发表或会议收录；早报已核对全文"
+    frontier_status = "\n- **状态：** 前沿预印本／技术报告，尚未经同行评审。" if role == "ai_frontier" else ""
+    if role == "ai_frontier":
+        version = re.search(r"(?m)^version:\s*(.+)$", row["reviewer_notes"] or "")
+        frontier_status += f" 本次阅读版本：{version.group(1) if version else '未记录'}。"
     return f"""### {index}. {row['title']}
 
 - **作者：** {authors}
@@ -568,7 +601,7 @@ def format_paper(index: int, role: str, row: sqlite3.Row) -> str:
 - **类型：** {row['work_type'] or '未注明'}；{peer_status}
 - **链接：** [论文页面]({row['source_url']}) · [本次阅读全文入口]({row['full_text_url']})
 - **影响力指标：** {metric}
-- **阅读时间：** 约 {row['reading_minutes']} 分钟
+- **阅读时间：** 约 {row['reading_minutes']} 分钟{frontier_status}
 
 **说人话：** {row['plain_language_takeaway']}
 
@@ -595,9 +628,10 @@ def render_brief(selected: list[tuple[str, sqlite3.Row]], brief_date: str, inter
     total_minutes = sum(int(row["reading_minutes"]) for _, row in selected)
     role_names = {
         "core": "核心兴趣",
-        "adjacent": "邻接领域",
-        "heavyweight": "重量级与跨领域",
+        "adjacent": "邻近领域",
+        "heavyweight": "重量级内容",
         "serendipity": "其他领域",
+        "ai_frontier": "AI 新动向",
     }
     lines = [
         f"# 学术早报 · {brief_date}",
@@ -611,11 +645,13 @@ def render_brief(selected: list[tuple[str, sqlite3.Row]], brief_date: str, inter
         for _, row in top:
             lines.append(f"- [{row['title']}]({row['source_url']})：{row['plain_language_takeaway']}")
         lines.append("")
-    for role in ("core", "adjacent", "heavyweight", "serendipity"):
+    for role in BRIEF_ROLES:
         group = [row for selected_role, row in selected if selected_role == role]
         lines.extend([f"## {role_names[role]}", ""])
         if not group:
-            lines.extend(["本期缺项：尚无满足全文、质量及主题多样性要求的已审阅候选。", ""])
+            empty_note = ("可选栏目：本期尚无完成全文核验且达到质量门槛的入选候选；不计入原四栏缺口。"
+                          if role == "ai_frontier" else "本期缺项：尚无满足全文、质量及主题多样性要求的已审阅候选。")
+            lines.extend([empty_note, ""])
         for row in group:
             lines.append(format_paper(selected.index((role, row)) + 1, role, row))
     missing = []
@@ -623,7 +659,7 @@ def render_brief(selected: list[tuple[str, sqlite3.Row]], brief_date: str, inter
     if sum(1 for role, _ in selected if role == "core") < int(quotas["core_min"]):
         missing.append("核心兴趣")
     if sum(1 for role, _ in selected if role == "adjacent") < int(quotas["adjacent_min"]):
-        missing.append("邻接领域")
+        missing.append("邻近领域")
     if sum(1 for role, _ in selected if role == "heavyweight") < int(quotas["heavyweight_target"]):
         missing.append("重量级内容")
     if sum(1 for role, _ in selected if role == "serendipity") < int(quotas.get("serendipity_min", 1)):
@@ -652,24 +688,29 @@ def render_site_archive_page(
         "adjacent": "邻近领域",
         "heavyweight": "重量级内容",
         "serendipity": "其他领域",
+        "ai_frontier": "AI 新动向",
     }
     role_labels = {
         "core": "PRIMARY SIGNAL",
         "adjacent": "ADJACENT FIELD",
         "heavyweight": "LANDMARK READ",
         "serendipity": "SERENDIPITY",
+        "ai_frontier": "AI FRONTIER · PREPRINT",
     }
     role_classes = {
         "core": "core",
         "adjacent": "adjacent",
         "heavyweight": "landmark",
         "serendipity": "random",
+        "ai_frontier": "ai-frontier",
     }
     total_minutes = sum(int(row["reading_minutes"]) for _, row in selected)
     top = sorted(selected, key=lambda pair: candidate_score(pair[1], interests), reverse=True)[:2]
     quotas = interests["quotas"]
     minimums = {"core": int(quotas["core_min"]), "adjacent": int(quotas["adjacent_min"]), "heavyweight": int(quotas["heavyweight_target"]), "serendipity": int(quotas.get("serendipity_min", 1))}
     maximums = {"core": int(quotas["core_max"]), "adjacent": int(quotas["adjacent_max"]), "heavyweight": int(quotas.get("heavyweight_max", 2)), "serendipity": int(quotas["serendipity_max"])}
+    minimums["ai_frontier"] = 0
+    maximums["ai_frontier"] = int(quotas.get("ai_frontier_max", 0))
 
     def esc(value: Any) -> str:
         return html.escape(str(value or ""), quote=True)
@@ -683,6 +724,10 @@ def render_site_archive_page(
         metric = "暂无可核验引用指标"
         if row["citations"] is not None:
             metric = f"{row['citation_source'] or '来源未注明'} 引用 {row['citations']} · {row['citation_checked_at'] or '日期未记录'}"
+        frontier_badge = ""
+        if role == "ai_frontier":
+            version = re.search(r"(?m)^version:\s*(.+)$", row["reviewer_notes"] or "")
+            frontier_badge = '<p class="access-note">前沿预印本／技术报告 · 尚未经同行评审 · 阅读版本：' + esc(version.group(1) if version else "未记录") + '</p>'
         return f"""
         <article class="paper">
           <div class="paper-index">{index:02d}</div>
@@ -690,6 +735,7 @@ def render_site_archive_page(
             <div class="meta"><span>{esc(row['venue'])} · {esc(row['publication_year'])}</span><span>{row['reading_minutes']} MIN</span><span>{esc(metric)}</span></div>
             <h3>{esc(row['title'])}</h3>
             <p class="authors">{esc(authors)}</p>
+            {frontier_badge}
             <div class="plain"><small>说人话</small><p>{esc(row['plain_language_takeaway'])}</p></div>
             <details><summary>展开完整精读笔记 <span>+</span></summary>
               <div class="review-sheet">
@@ -720,11 +766,13 @@ def render_site_archive_page(
         for index, (_, row) in enumerate(top, start=1)
     )
     sections: list[str] = []
-    for section_index, role in enumerate(("core", "adjacent", "heavyweight", "serendipity"), start=1):
+    for section_index, role in enumerate(BRIEF_ROLES, start=1):
         group = [(index, row) for index, (selected_role, row) in enumerate(selected, start=1) if selected_role == role]
         cards = []
         if not group:
-            cards.append('<p class="dek">本期缺项：尚无满足全文、质量及主题多样性要求的已审阅候选。</p>')
+            empty_note = ("可选栏目：本期尚无完成全文核验且达到质量门槛的入选候选；不计入原四栏缺口。"
+                          if role == "ai_frontier" else "本期缺项：尚无满足全文、质量及主题多样性要求的已审阅候选。")
+            cards.append(f'<p class="dek">{empty_note}</p>')
         for index, row in group:
             card = paper_card(index, role, row).replace('<article class="paper">', f'<article class="paper" id="paper-{row["id"]}">', 1)
             cards.append(card)
@@ -733,7 +781,7 @@ def render_site_archive_page(
         )
 
     return f"""<!doctype html>
-<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Research Daily · {brief_date}</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;600;700;900&family=Noto+Serif+SC:wght@600;700;900&display=swap" rel="stylesheet"><link rel="stylesheet" href="../../styles.css"></head>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Research Daily · {brief_date}</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;600;700;900&family=Noto+Serif+SC:wght@600;700;900&display=swap" rel="stylesheet"><link rel="stylesheet" href="../../styles.css"><style>.paper-section.ai-frontier{{--accent:#126871}}</style></head>
 <body><header class="masthead"><a class="brand" href="../"><span class="brand-mark">RD</span><span><strong>RESEARCH DAILY</strong><small>FULL-TEXT REVIEWED</small></span></a><div class="issue"><a class="archive-link" href="../">综合目录</a>&nbsp;&nbsp;·&nbsp;&nbsp;{brief_date}</div></header>
 <main><section class="hero archive-hero"><div class="hero-copy"><p class="eyebrow">PERMANENT DAILY EDITION</p><h1>{brief_date}<br><em>学术早报</em></h1><p class="dek">共 {len(selected)} 篇，建议阅读 {total_minutes} 分钟。此页面按日期永久保存，后续早报不会覆盖本期内容。</p><div class="hero-actions"><a class="primary" href="#core">开始阅读 <span>↓</span></a><a class="ghost archive-button" href="../">查看全部日期</a></div></div><aside class="reading-map"><div class="map-head"><span>ARCHIVED EDITION</span><strong>{total_minutes}<span>MIN</span></strong></div><p class="archive-count">{len(selected)} 篇全文核验论文<br>推荐记录已写入永久去重账本</p></aside></section>
 <section class="priority"><div class="priority-label"><span>IF YOU ONLY READ TWO</span><b>只读两篇</b></div>{priority}</section>{''.join(sections)}</main>
@@ -768,11 +816,19 @@ def command_import(args: argparse.Namespace) -> None:
 
 
 def command_collect(args: argparse.Namespace) -> None:
+    discovery = load_config(DISCOVERY_PATH)
+    if not discovery.get("legacy_keyword_collection_enabled", False) and not getattr(args, "allow_keyword_fallback", False):
+        raise ValueError("Default discovery is catalog-first: run discovery-plan and use its skill. "
+                         "Use --allow-keyword-fallback only for a documented supplementary search.")
+    if not discovery.get("legacy_keyword_collection_enabled", False) and not (args.query and args.track):
+        raise ValueError("A supplementary keyword search requires --query and --track for its actual gap")
     sources = load_config(SOURCES_PATH)
     interests = load_config(INTERESTS_PATH)
     since = dt.date.today() - dt.timedelta(days=args.days)
     all_records: list[dict[str, Any]] = []
-    for search in sources.get("searches", []):
+    searches = ([{"query": args.query, "track": args.track}] if args.query and args.track
+                else sources.get("searches", []))
+    for search in searches:
         records = fetch_openalex(search["query"], search["track"], since, args.per_query, args.mailto)
         all_records.extend(records)
     filtered_records = [
@@ -831,6 +887,66 @@ def command_candidates(args: argparse.Namespace) -> None:
             for row in rows
         ]
     print(json.dumps(output, ensure_ascii=False, indent=2))
+
+
+def save_discovery(conn: sqlite3.Connection, payload: dict[str, Any]) -> None:
+    """Persist current checkpoints/annotations; callers commit the batch atomically."""
+    timestamp = now_iso()
+    for source in payload.get("sources", []):
+        if not source.get("source_key") or not source.get("url"):
+            raise ValueError("discovery source requires source_key and url")
+        if not isinstance(source.get("complete"), bool):
+            raise ValueError("source complete must be a JSON boolean")
+        conn.execute(
+            "INSERT INTO discovery_sources VALUES (?, ?, ?, ?, ?, ?) "
+            "ON CONFLICT(source_key) DO UPDATE SET url=excluded.url, cursor=excluded.cursor, "
+            "complete=excluded.complete, notes=excluded.notes, checked_at=excluded.checked_at",
+            (source["source_key"], source["url"], source.get("cursor", ""), int(source["complete"]),
+             source.get("notes", ""), timestamp),
+        )
+    for decision in payload.get("decisions", []):
+        for field in ("paper_id", "source_key", "topic", "status", "reason"):
+            if not isinstance(decision.get(field), str) or not decision[field].strip():
+                raise ValueError(f"discovery decision requires {field}")
+        if decision["status"] not in {"shortlist", "defer", "reject", "access_blocked"}:
+            raise ValueError("invalid discovery status")
+        retry = decision.get("retry_after")
+        if retry is not None:
+            dt.date.fromisoformat(retry)
+        conn.execute(
+            "INSERT INTO discovery_decisions VALUES (?, ?, ?, ?, ?, ?, ?) "
+            "ON CONFLICT(paper_id, source_key) DO UPDATE SET topic=excluded.topic, status=excluded.status, "
+            "reason=excluded.reason, retry_after=excluded.retry_after, updated_at=excluded.updated_at",
+            (decision["paper_id"], decision["source_key"], decision["topic"], decision["status"],
+             decision["reason"], retry, timestamp),
+        )
+
+
+def command_discovery_record(args: argparse.Namespace) -> None:
+    payload = load_config(args.path)
+    if not isinstance(payload, dict):
+        raise ValueError("discovery state must be a JSON object")
+    with connect(args.db) as conn:
+        save_discovery(conn, payload)
+    print(json.dumps({"sources_saved": len(payload.get("sources", [])),
+                      "decisions_saved": len(payload.get("decisions", []))}))
+
+
+def command_discovery_plan(args: argparse.Namespace) -> None:
+    policy = load_config(DISCOVERY_PATH)
+    skill = (ROOT / policy["skill"]).resolve()
+    if not skill.is_file():
+        raise ValueError(f"configured discovery skill not found: {skill}")
+    with connect(args.db) as conn:
+        sources = [dict(row) for row in conn.execute("SELECT * FROM discovery_sources ORDER BY checked_at")]
+        counts = {row["status"]: row["n"] for row in conn.execute(
+            "SELECT status, COUNT(*) AS n FROM discovery_decisions GROUP BY status")}
+        result = {"skill": str(skill), "policy": policy, "database": str(args.db),
+                  "sources": sources, "annotation_counts": counts}
+        if args.source_key:
+            result["decisions"] = [dict(row) for row in conn.execute(
+                "SELECT * FROM discovery_decisions WHERE source_key = ? ORDER BY updated_at", (args.source_key,))]
+    print(json.dumps(result, ensure_ascii=False, indent=2))
 
 
 def command_review(args: argparse.Namespace) -> None:
@@ -937,10 +1053,21 @@ def build_parser() -> argparse.ArgumentParser:
     import_cmd.add_argument("path", type=Path)
     import_cmd.set_defaults(func=command_import)
 
-    collect = sub.add_parser("collect-openalex", help="Collect recent discovery candidates from OpenAlex")
+    plan = sub.add_parser("discovery-plan", help="Resolve the discovery skill and show saved catalog progress")
+    plan.add_argument("--source-key")
+    plan.set_defaults(func=command_discovery_plan)
+
+    discovery_record = sub.add_parser("record-discovery", help="Save catalog checkpoints and screening annotations")
+    discovery_record.add_argument("path", type=Path)
+    discovery_record.set_defaults(func=command_discovery_record)
+
+    collect = sub.add_parser("collect-openalex", help="Optional supplementary keyword collection, not the default route")
     collect.add_argument("--days", type=int, default=45)
     collect.add_argument("--per-query", type=int, default=25)
     collect.add_argument("--mailto")
+    collect.add_argument("--allow-keyword-fallback", action="store_true")
+    collect.add_argument("--query", help="Gap-specific supplementary query")
+    collect.add_argument("--track", choices=list(load_config(INTERESTS_PATH)["tracks"]))
     collect.set_defaults(func=command_collect)
 
     candidates = sub.add_parser("list-candidates", help="List candidates for full-text review")

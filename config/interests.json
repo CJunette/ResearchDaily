@@ -8,14 +8,15 @@
     "min_quality_score": 7.0
   },
   "quotas": {
-    "core_min": 2,
-    "core_max": 3,
-    "adjacent_min": 1,
-    "adjacent_max": 2,
-    "heavyweight_target": 1,
-    "heavyweight_max": 2,
+    "core_min": 3,
+    "core_max": 4,
+    "adjacent_min": 2,
+    "adjacent_max": 3,
+    "heavyweight_target": 2,
+    "heavyweight_max": 3,
     "serendipity_min": 1,
-    "serendipity_max": 2
+    "serendipity_max": 2,
+    "ai_frontier_max": 1
   },
   "diversity": {
     "max_same_topic_per_section": 1,
@@ -72,6 +73,11 @@
         "scientific breakthrough", "perspective", "review", "human behaviour",
         "artificial intelligence and society"
       ]
+    },
+    "ai_frontier": {
+      "role": "ai_frontier",
+      "weight": 0.30,
+      "keywords": ["AI agents", "human-AI interaction", "multimodal applications", "new AI paradigms"]
     },
     "serendipity": {
       "weight": 0.15,
